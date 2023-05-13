@@ -1,5 +1,5 @@
 {
-    "name": "SimplStorage",
+    "name": "decentralized-sla-backend",
     "version": "1.0.0",
     "main": "index.js",
     "license": "MIT",
@@ -7,12 +7,10 @@
     "scripts": {
         "compile": "tsc",
         "start": "tsc-watch --onSuccess \"node --experimental-specifier-resolution=node ./dist/index.js\"",
-        "codegen": "graphql-codegen --config codegen.ts",
         "lint": "eslint . --ext .ts"
     },
     "dependencies": {
         "@apollo/server": "^4.1.1",
-        "@graphql-codegen/typescript-mongodb": "^2.4.6",
         "body-parser": "^1.20.1",
         "class-validator": "^0.13.2",
         "cors": "^2.8.5",
@@ -29,8 +27,6 @@
         "uuid": "^9.0.0"
     },
     "devDependencies": {
-        "@graphql-codegen/cli": "^3.2.2",
-        "@graphql-codegen/client-preset": "^2.1.1",
         "@types/cors": "^2.8.13",
         "@types/graphql": "^14.5.0",
         "@types/lodash": "^4.14.190",
