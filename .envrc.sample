@@ -1,0 +1,5 @@
+export ETH_USER=
+export ETH_PASSWORD=
+
+export KALEIDO_GATEWAY_URL=
+export KALEIDO_GLOBAL_API_KEY=
