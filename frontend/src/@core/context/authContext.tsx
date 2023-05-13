@@ -2,9 +2,12 @@
 import { createContext, useState, ReactNode } from 'react'
 import { Amplify, Auth } from 'aws-amplify'
 
+export type Session = Awaited<ReturnType<typeof Auth.currentSession>>
+
 export type User = {
-  id: string
+  username: string
   email: string
+  session: Session
 }
 
 export type AuthContextValue = {
@@ -13,7 +16,6 @@ export type AuthContextValue = {
   confirmSignup: (email: string, code: string) => void
   resendSignup: (email: string) => void
   signin: (email: string, password: string) => void
-  confirmSignin: (email: string, code: string) => void
   signout: () => void
 }
 
@@ -30,7 +32,6 @@ export const AuthContext = createContext<AuthContextValue>({
   confirmSignup: () => null,
   resendSignup: () => null,
   signin: () => null,
-  confirmSignin: () => null,
   signout: () => null
 })
 
@@ -71,18 +72,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const signin = async (email: string, password: string) => {
     try {
       const result = await Auth.signIn(email, password)
-      console.log(result)
+      const user = {
+        username: result.username,
+        email: result.attributes.email,
+        session: result.signInUserSession
+      }
+      setUser(user)
     } catch (error) {
       console.log('error signing in:', error)
-    }
-  }
-
-  const confirmSignin = async (email: string, code: string) => {
-    try {
-      const result = await Auth.confirmSignIn(email, code)
-      console.log(result)
-    } catch (error) {
-      console.log('error confirming sign in:', error)
     }
   }
 
@@ -95,7 +92,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }
 
   return (
-    <AuthContext.Provider value={{ user, signup, confirmSignup, resendSignup, signin, confirmSignin, signout }}>
+    <AuthContext.Provider value={{ user, signup, confirmSignup, resendSignup, signin, signout }}>
       {children}
     </AuthContext.Provider>
   )

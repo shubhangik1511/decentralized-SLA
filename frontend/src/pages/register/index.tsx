@@ -3,6 +3,7 @@ import { useState, ChangeEvent, MouseEvent, ReactNode } from 'react'
 
 // ** Next Imports
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 
 // ** MUI Components
 import Box from '@mui/material/Box'
@@ -33,7 +34,6 @@ import FooterIllustrationsV1 from 'src/views/pages/auth/FooterIllustration'
 
 // ** Hook Import
 import { useAuth } from 'src/@core/hooks/useAuth'
-import { useRouter } from 'next/router'
 
 interface State {
   email: string
@@ -79,7 +79,7 @@ const RegisterPage = () => {
     event.preventDefault()
   }
 
-  const submitHandler = async (e: React.SyntheticEvent) => {
+  const handleSubmit = async (e: React.SyntheticEvent) => {
     e.preventDefault()
     if (values.verificationCodeSent) {
       await auth.confirmSignup(values.email, values.code)
@@ -173,7 +173,7 @@ const RegisterPage = () => {
             </Typography>
             <Typography variant='body2'>Make your app management easy and fun!</Typography>
           </Box>
-          <form noValidate autoComplete='off' onSubmit={submitHandler}>
+          <form noValidate autoComplete='off' onSubmit={handleSubmit}>
             <TextField
               autoFocus
               fullWidth
