@@ -1,25 +1,44 @@
 {
     "compilerOptions": {
         "outDir": "dist",
-        "lib": ["es2021", "ESNext.AsyncIterable"],
+        "lib": [
+            "es2021",
+            "ESNext.AsyncIterable",
+            "dom"
+        ],
         "target": "es2021",
         "module": "esnext",
         "moduleResolution": "node",
         "esModuleInterop": true,
-        "types": ["node"],
+        "types": [
+            "node"
+        ],
         "removeComments": true,
         "strict": true,
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true,
-        "strictPropertyInitialization": false
+        "strictPropertyInitialization": false,
     },
-    "include": ["src/**/*.ts"],
-    "exclude": ["node_modules", ".vscode"],
+    "include": [
+        "src/**/*.ts"
+    ],
+    "exclude": [
+        "node_modules",
+        ".vscode"
+    ],
     "baseUrl": "./src",
     "paths": {
-        "db": ["db"],
-        "enums": ["enums"],
-        "account": ["modules/account"],
-        "common": ["modules/common"]
+        "db": [
+            "db"
+        ],
+        "enums": [
+            "enums"
+        ],
+        "account": [
+            "modules/account"
+        ],
+        "common": [
+            "modules/common"
+        ],
     }
 }

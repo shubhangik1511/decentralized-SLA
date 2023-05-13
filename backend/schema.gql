@@ -16,6 +16,7 @@ interface IMongoDocument {
 }
 
 type Mutation {
+  deployContract: String!
   login(emailId: String!, password: String!): String!
   signUp(signUp: SignUpInput!): String!
 }

@@ -1,4 +1,5 @@
 import "reflect-metadata";
+import "./fetch-polyfill";
 
 import { ApolloServer } from "@apollo/server";
 import dotenv from "dotenv";
