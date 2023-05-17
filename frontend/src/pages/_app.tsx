@@ -30,6 +30,22 @@ import 'react-perfect-scrollbar/dist/css/styles.css'
 // ** Global css styles
 import '../../styles/globals.css'
 
+import { EthereumClient, w3mConnectors, w3mProvider } from '@web3modal/ethereum'
+import { Web3Modal } from '@web3modal/react'
+import { configureChains, createConfig, WagmiConfig } from 'wagmi'
+import { arbitrum, mainnet, polygon } from 'wagmi/chains'
+
+const chains = [arbitrum, mainnet, polygon]
+const projectId = process.env.NEXT_PUBLIC_PROJECT_ID!
+
+const { publicClient } = configureChains(chains, [w3mProvider({ projectId })])
+const wagmiConfig = createConfig({
+  autoConnect: true,
+  connectors: w3mConnectors({ projectId, version: 1, chains }),
+  publicClient
+})
+const ethereumClient = new EthereumClient(wagmiConfig, chains)
+
 // ** Extend App Props with Emotion
 type ExtendedAppProps = AppProps & {
   Component: NextPage
@@ -69,14 +85,16 @@ const App = (props: ExtendedAppProps) => {
         <meta name='keywords' content='Material Design, MUI, Admin Template, React Admin Template' />
         <meta name='viewport' content='initial-scale=1, width=device-width' />
       </Head>
-
-      <SettingsProvider>
-        <SettingsConsumer>
-          {({ settings }) => {
-            return <ThemeComponent settings={settings}>{getLayout(<Component {...pageProps} />)}</ThemeComponent>
-          }}
-        </SettingsConsumer>
-      </SettingsProvider>
+      <WagmiConfig config={wagmiConfig}>
+        <SettingsProvider>
+          <SettingsConsumer>
+            {({ settings }) => {
+              return <ThemeComponent settings={settings}>{getLayout(<Component {...pageProps} />)}</ThemeComponent>
+            }}
+          </SettingsConsumer>
+        </SettingsProvider>
+      </WagmiConfig>
+      <Web3Modal projectId={projectId} ethereumClient={ethereumClient} />
     </CacheProvider>
   )
 }

@@ -1,3 +1,12 @@
-import Dashboard from 'src/pages/dashboard'
+import { Web3Button, W3mQrCode } from '@web3modal/react'
 
-export default Dashboard
+function HomePage() {
+  return (
+    <>
+      <Web3Button />
+      <W3mQrCode />
+    </>
+  )
+}
+
+export default HomePage
