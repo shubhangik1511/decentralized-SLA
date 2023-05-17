@@ -23,9 +23,6 @@ import AccountOutline from 'mdi-material-ui/AccountOutline'
 import MessageOutline from 'mdi-material-ui/MessageOutline'
 import HelpCircleOutline from 'mdi-material-ui/HelpCircleOutline'
 
-// ** Hook Import
-import { useAuth } from 'src/@core/hooks/useAuth'
-
 // ** Styled Components
 const BadgeContentSpan = styled('span')(({ theme }) => ({
   width: 8,
@@ -41,7 +38,6 @@ const UserDropdown = () => {
 
   // ** Hooks
   const router = useRouter()
-  const auth = useAuth()
 
   const handleDropdownOpen = (event: SyntheticEvent) => {
     setAnchorEl(event.currentTarget)
@@ -52,11 +48,6 @@ const UserDropdown = () => {
       router.push(url)
     }
     setAnchorEl(null)
-  }
-
-  const handleLogout = async () => {
-    await auth.signout()
-    handleDropdownClose('/login')
   }
 
   const styles = {
@@ -153,7 +144,7 @@ const UserDropdown = () => {
           </Box>
         </MenuItem>
         <Divider />
-        <MenuItem sx={{ py: 2 }} onClick={handleLogout}>
+        <MenuItem sx={{ py: 2 }} onClick={() => handleDropdownClose()}>
           <LogoutVariant sx={{ marginRight: 2, fontSize: '1.375rem', color: 'text.secondary' }} />
           Logout
         </MenuItem>

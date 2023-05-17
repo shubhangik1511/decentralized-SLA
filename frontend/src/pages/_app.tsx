@@ -20,7 +20,6 @@ import ThemeComponent from 'src/@core/theme/ThemeComponent'
 
 // ** Contexts
 import { SettingsConsumer, SettingsProvider } from 'src/@core/context/settingsContext'
-import { AuthProvider } from 'src/@core/context/authContext'
 
 // ** Utils Imports
 import { createEmotionCache } from 'src/@core/utils/create-emotion-cache'
@@ -71,15 +70,13 @@ const App = (props: ExtendedAppProps) => {
         <meta name='viewport' content='initial-scale=1, width=device-width' />
       </Head>
 
-      <AuthProvider>
-        <SettingsProvider>
-          <SettingsConsumer>
-            {({ settings }) => {
-              return <ThemeComponent settings={settings}>{getLayout(<Component {...pageProps} />)}</ThemeComponent>
-            }}
-          </SettingsConsumer>
-        </SettingsProvider>
-      </AuthProvider>
+      <SettingsProvider>
+        <SettingsConsumer>
+          {({ settings }) => {
+            return <ThemeComponent settings={settings}>{getLayout(<Component {...pageProps} />)}</ThemeComponent>
+          }}
+        </SettingsConsumer>
+      </SettingsProvider>
     </CacheProvider>
   )
 }

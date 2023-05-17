@@ -1,3 +1,3 @@
-import Login from 'src/pages/login'
+import Dashboard from 'src/pages/dashboard'
 
-export default Login
+export default Dashboard
