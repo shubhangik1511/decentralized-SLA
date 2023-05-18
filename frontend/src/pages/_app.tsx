@@ -33,9 +33,9 @@ import '../../styles/globals.css'
 import { EthereumClient, w3mConnectors, w3mProvider } from '@web3modal/ethereum'
 import { Web3Modal } from '@web3modal/react'
 import { configureChains, createConfig, WagmiConfig } from 'wagmi'
-import { arbitrum, mainnet, polygon } from 'wagmi/chains'
+import { goerli, mainnet, polygon, polygonMumbai } from 'wagmi/chains'
 
-const chains = [arbitrum, mainnet, polygon]
+const chains = [mainnet, polygon, polygonMumbai, goerli]
 const projectId = process.env.NEXT_PUBLIC_PROJECT_ID!
 
 const { publicClient } = configureChains(chains, [w3mProvider({ projectId })])
