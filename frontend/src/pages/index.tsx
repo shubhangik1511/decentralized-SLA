@@ -1,3 +1,19 @@
-import HomePage from './home'
+import { useEffect } from 'react'
+import { useAccount } from 'wagmi'
+import { useRouter } from 'next/router'
 
-export default HomePage
+const Page = () => {
+  const { address } = useAccount()
+  const router = useRouter()
+
+  useEffect(() => {
+    if (address) {
+      router.push('/dashboard')
+    }
+    router.push('/home')
+  }, [address, router])
+
+  return <></>
+}
+
+export default Page

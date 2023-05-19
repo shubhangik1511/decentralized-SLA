@@ -1,10 +1,13 @@
 // ** React Imports
-import { ReactNode } from 'react'
+import { ReactNode, useEffect } from 'react'
 
 // ** MUI Components
 import { styled } from '@mui/material/styles'
 import Typography from '@mui/material/Typography'
 import Box, { BoxProps } from '@mui/material/Box'
+
+import { useAccount } from 'wagmi'
+import { useRouter } from 'next/router'
 
 // ** Layout Import
 import BlankLayout from 'src/@core/layouts/BlankLayout'
@@ -45,6 +48,15 @@ const TreeIllustration = styled('img')(({ theme }) => ({
 }))
 
 const HomePage = () => {
+  const { address } = useAccount()
+  const router = useRouter()
+
+  useEffect(() => {
+    if (address) {
+      router.push('/dashboard')
+    }
+  }, [address, router])
+
   return (
     <Box className='content-center'>
       <Box sx={{ p: 5, display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
