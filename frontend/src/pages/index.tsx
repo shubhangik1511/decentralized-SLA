@@ -1,12 +1,3 @@
-import { Web3Button, W3mQrCode } from '@web3modal/react'
-
-function HomePage() {
-  return (
-    <>
-      <Web3Button />
-      <W3mQrCode />
-    </>
-  )
-}
+import HomePage from './home'
 
 export default HomePage
