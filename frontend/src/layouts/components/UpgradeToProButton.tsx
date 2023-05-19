@@ -16,7 +16,7 @@ const BuyNowButton = () => {
   // ** States
   const [open, setOpen] = useState<boolean>(false)
   const [popperElement, setPopperElement] = useState(null)
-  const [referenceElement, setReferenceElement] = useState(null)
+  const [referenceElement] = useState(null)
 
   const { styles, attributes, update } = usePopper(referenceElement, popperElement, {
     placement: 'top-end'
@@ -36,25 +36,6 @@ const BuyNowButton = () => {
       className='upgrade-to-pro-button mui-fixed'
       sx={{ right: theme => theme.spacing(20), bottom: theme => theme.spacing(10), zIndex: 11, position: 'fixed' }}
     >
-      <Button
-        component='a'
-        target='_blank'
-        variant='contained'
-        onMouseEnter={handleOpen}
-        onMouseLeave={handleClose}
-        ref={(e: any) => setReferenceElement(e)}
-        href='https://themeselection.com/products/materio-mui-react-nextjs-admin-template/'
-        sx={{
-          backgroundColor: '#ff3e1d',
-          boxShadow: '0 1px 20px 1px #ff3e1d',
-          '&:hover': {
-            boxShadow: 'none',
-            backgroundColor: '#e6381a'
-          }
-        }}
-      >
-        Upgrade To Pro
-      </Button>
       <Fade in={open} timeout={700}>
         <Box
           style={styles.popper}
