@@ -1,5 +1,5 @@
 // ** React Imports
-import { ReactNode } from 'react'
+import { ReactNode, useEffect } from 'react'
 
 // ** MUI Imports
 import { Theme } from '@mui/material/styles'
@@ -17,6 +17,8 @@ import VerticalAppBarContent from './components/vertical/AppBarContent'
 
 // ** Hook Import
 import { useSettings } from 'src/@core/hooks/useSettings'
+import { useAccount } from 'wagmi'
+import { useRouter } from 'next/router'
 
 interface Props {
   children: ReactNode
@@ -25,6 +27,14 @@ interface Props {
 const UserLayout = ({ children }: Props) => {
   // ** Hooks
   const { settings, saveSettings } = useSettings()
+  const { isConnected } = useAccount()
+  const router = useRouter()
+
+  useEffect(() => {
+    if (!isConnected) {
+      router.push('/home')
+    }
+  }, [isConnected, router])
 
   /**
    *  The below variable will hide the current layout menu at given screen size.
