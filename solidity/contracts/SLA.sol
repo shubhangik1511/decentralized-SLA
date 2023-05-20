@@ -1,14 +1,21 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.9;
 
+import "./Random.sol";
+
 contract SLA {
     address public owner;
     address public manager;
-    address[] consumer;
+    mapping(address => bool) consumers;
+    mapping(string => bool) public invites;
+    Random random;
+
+    event InviteGenerated(string inviteString);
 
     constructor() {
         owner = tx.origin;
         manager = msg.sender;
+        random = new Random();
     }
 
     modifier onlyOwner() {
@@ -21,7 +28,21 @@ contract SLA {
         _;
     }
 
-    function addConsumer(address _consumer) public onlyManager {
-        consumer.push(_consumer);
+    function canConsume() public view returns (bool) {
+        return consumers[msg.sender];
+    }
+
+    function inviteConsumer() public onlyOwner returns (string memory) {
+        string memory randomString = random.randomString(7);
+        invites[randomString] = true;
+        emit InviteGenerated(randomString);
+        return randomString;
+    }
+
+    function acceptInvitation(string memory _inviteString) public {
+        require(msg.sender != owner, "Provider cannot consume");
+        require(invites[_inviteString] == true, "Invalid invite");
+        delete invites[_inviteString];
+        consumers[msg.sender] = true;
     }
 }

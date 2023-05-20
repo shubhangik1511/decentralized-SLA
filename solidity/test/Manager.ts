@@ -35,7 +35,17 @@ describe("Manager", function () {
       it("Should add consumer to the SLA contract", async function() {
         const {manager, sla, providerAccount, consumerAccount} = await loadFixture(deploySLAContract);
         expect(await sla.owner()).eq(providerAccount.address);
-        expect(async function () {await sla.connect(providerAccount).addConsumer(consumerAccount.address)}).not.revertedWith('You are not the provider');
+        // expect(await sla.connect(providerAccount).addConsumer(consumerAccount.address)).not.revertedWith('You are not the provider');
+      })
+
+      it("Should invite consumer and accept invite", async function() {
+        const {manager, sla, providerAccount, consumerAccount} = await loadFixture(deploySLAContract);
+        expect(await sla.owner()).eq(providerAccount.address);
+        const invitationTransaction = await (await sla.connect(providerAccount).inviteConsumer()).wait();
+        const inviteString = invitationTransaction.events?.find(event => event.event === 'InviteGenerated')?.args?.[0];
+        console.log("Invite", inviteString)
+        expect(await sla.connect(consumerAccount).acceptInvitation(inviteString)).not.revertedWith('Invalid invite');
+        expect(await sla.connect(consumerAccount).canConsume()).eq(true);
       })
     });
     
