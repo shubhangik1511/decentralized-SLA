@@ -6,6 +6,8 @@ import FormatLetterCase from 'mdi-material-ui/FormatLetterCase'
 import CreditCardOutline from 'mdi-material-ui/CreditCardOutline'
 import GoogleCirclesExtended from 'mdi-material-ui/GoogleCirclesExtended'
 import PlusCircleOutline from 'mdi-material-ui/PlusCircleOutline'
+import FileSign from 'mdi-material-ui/FileSign'
+import FileDocumentMultipleOutline from 'mdi-material-ui/FileDocumentMultipleOutline'
 
 // ** Type import
 import { VerticalNavItemsType } from 'src/@core/layouts/types'
@@ -21,6 +23,16 @@ const navigation = (): VerticalNavItemsType => {
       title: 'Create SLA',
       icon: PlusCircleOutline,
       path: '/create-sla'
+    },
+    {
+      title: 'View SLAs',
+      icon: FileDocumentMultipleOutline,
+      path: '/view-sla'
+    },
+    {
+      title: 'Contracts',
+      icon: FileSign,
+      path: '/contracts'
     },
     {
       sectionTitle: 'User Interface'
