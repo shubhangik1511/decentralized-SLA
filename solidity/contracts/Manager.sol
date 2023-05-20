@@ -4,31 +4,28 @@ pragma solidity ^0.8.9;
 import "./SLA.sol";
 
 contract Manager {
-    mapping(address => address[]) providers;
-    mapping(address => address[]) consumers;
+    mapping(address => address[]) providerSLAs;
+    mapping(address => address[]) consumerSLAs;
     address[] public allSLAs;
+
+    // events
     event SLAContractCreated(address indexed newContract);
 
     constructor() {}
 
-    function addSLA(address _sla) public {
-        allSLAs.push(_sla);
-    }
-
     function getMyProviders() public view returns (address[] memory) {
-        return providers[msg.sender];
+        return providerSLAs[msg.sender];
     }
 
     function getMyConsumers() public view returns (address[] memory) {
-        return consumers[msg.sender];
+        return consumerSLAs[msg.sender];
     }
 
     // deploy a new SLA contract
-    function createSLAContract() public returns (address) {
+    function createSLAContract() public {
         address slaAddress = address(new SLA());
-        addSLA(slaAddress);
-        providers[msg.sender].push(slaAddress);
+        allSLAs.push(slaAddress);
+        providerSLAs[msg.sender].push(slaAddress);
         emit SLAContractCreated(slaAddress);
-        return slaAddress;
     }
 }

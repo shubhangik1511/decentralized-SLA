@@ -32,11 +32,10 @@ contract SLA {
         return consumers[msg.sender];
     }
 
-    function inviteConsumer() public onlyOwner returns (string memory) {
+    function inviteConsumer() public onlyOwner {
         string memory randomString = random.randomString(7);
         invites[randomString] = true;
         emit InviteGenerated(randomString);
-        return randomString;
     }
 
     function acceptInvitation(string memory _inviteString) public {
