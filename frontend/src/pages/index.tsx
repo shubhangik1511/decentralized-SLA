@@ -3,15 +3,15 @@ import { useAccount } from 'wagmi'
 import { useRouter } from 'next/router'
 
 const Page = () => {
-  const { address } = useAccount()
+  const { isConnected } = useAccount()
   const router = useRouter()
 
   useEffect(() => {
-    if (address) {
+    if (isConnected) {
       router.push('/dashboard')
     }
     router.push('/home')
-  }, [address, router])
+  }, [isConnected, router])
 
   return <></>
 }
