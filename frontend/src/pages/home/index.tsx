@@ -48,14 +48,14 @@ const TreeIllustration = styled('img')(({ theme }) => ({
 }))
 
 const HomePage = () => {
-  const { address } = useAccount()
+  const { isConnected } = useAccount()
   const router = useRouter()
 
   useEffect(() => {
-    if (address) {
+    if (isConnected) {
       router.push('/dashboard')
     }
-  }, [address, router])
+  }, [isConnected, router])
 
   return (
     <Box className='content-center'>
@@ -65,7 +65,7 @@ const HomePage = () => {
         </BoxWrapper>
         <Img height='487' alt='error-illustration' src='/images/pages/404.png' />
         <Typography variant='h5' sx={{ mb: 4, fontSize: '1.5rem !important' }}>
-          Click on the button below to get started!
+          Click on below button to get started!
         </Typography>
         <Web3Button />
       </Box>

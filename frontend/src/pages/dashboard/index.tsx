@@ -1,3 +1,5 @@
+import { useEffect } from 'react'
+
 // ** MUI Imports
 import Grid from '@mui/material/Grid'
 
@@ -22,7 +24,19 @@ import WeeklyOverview from 'src/views/dashboard/WeeklyOverview'
 import DepositWithdraw from 'src/views/dashboard/DepositWithdraw'
 import SalesByCountries from 'src/views/dashboard/SalesByCountries'
 
+import { useAccount } from 'wagmi'
+import { useRouter } from 'next/router'
+
 const Dashboard = () => {
+  const { isConnected } = useAccount()
+  const router = useRouter()
+
+  useEffect(() => {
+    if (!isConnected) {
+      router.push('/home')
+    }
+  }, [isConnected, router])
+
   return (
     <ApexChartWrapper>
       <Grid container spacing={6}>
