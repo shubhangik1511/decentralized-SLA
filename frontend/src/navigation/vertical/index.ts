@@ -20,7 +20,7 @@ const navigation = (): VerticalNavItemsType => {
       path: '/dashboard'
     },
     {
-      title: 'Create SLA',
+      title: 'New SLA',
       icon: PlusCircleOutline,
       path: '/create-sla'
     },
