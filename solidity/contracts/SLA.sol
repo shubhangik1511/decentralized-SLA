@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.9;
 
-import "./Random.sol";
+import "../interfaces/IRandom.sol";
 
 contract SLA {
     string public name;
@@ -11,14 +11,14 @@ contract SLA {
     // struct invites => validity, inviteString, ref
     // strcut consumer => address, ref, validity
     mapping(string => bool) public invites;
-    Random random;
+    IRandom random;
 
     event InviteGenerated(string inviteString);
 
-    constructor(string memory _name) {
+    constructor(string memory _name, address randomContractAddress) {
         owner = tx.origin;
         manager = msg.sender;
-        random = new Random();
+        random = IRandom(randomContractAddress); // remove this
         name = _name;
     }
 
@@ -38,7 +38,7 @@ contract SLA {
 
     function inviteConsumer() public onlyOwner {
         string memory randomString = random.randomString(7);
-        // check if randomString is already in use
+        require(invites[randomString] == false, "Duplicate invite"); // Need to change approach
         invites[randomString] = true;
         emit InviteGenerated(randomString);
     }
