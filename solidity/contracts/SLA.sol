@@ -4,18 +4,22 @@ pragma solidity ^0.8.9;
 import "./Random.sol";
 
 contract SLA {
+    string public name;
     address public owner;
     address public manager;
     mapping(address => bool) consumers;
+    // struct invites => validity, inviteString, ref
+    // strcut consumer => address, ref, validity
     mapping(string => bool) public invites;
     Random random;
 
     event InviteGenerated(string inviteString);
 
-    constructor() {
+    constructor(string memory _name) {
         owner = tx.origin;
         manager = msg.sender;
         random = new Random();
+        name = _name;
     }
 
     modifier onlyOwner() {
@@ -34,6 +38,7 @@ contract SLA {
 
     function inviteConsumer() public onlyOwner {
         string memory randomString = random.randomString(7);
+        // check if randomString is already in use
         invites[randomString] = true;
         emit InviteGenerated(randomString);
     }
@@ -43,5 +48,6 @@ contract SLA {
         require(invites[_inviteString] == true, "Invalid invite");
         delete invites[_inviteString];
         consumers[msg.sender] = true;
+        // add consumer to manager
     }
 }

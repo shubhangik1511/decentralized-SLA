@@ -22,8 +22,8 @@ contract Manager {
     }
 
     // deploy a new SLA contract
-    function createSLAContract() public {
-        address slaAddress = address(new SLA());
+    function createSLAContract(string memory _name) public {
+        address slaAddress = address(new SLA(_name));
         allSLAs.push(slaAddress);
         providerSLAs[msg.sender].push(slaAddress);
         emit SLAContractCreated(slaAddress);
