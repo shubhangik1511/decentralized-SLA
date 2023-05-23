@@ -7,6 +7,7 @@ contract Manager {
     address randomContractAddress;
     mapping(address => address[]) public providerSLAs;
     mapping(address => address[]) public consumerSLAs;
+    uint256 public slaCount;
     address[] public allSLAs;
     mapping(address => bool) public allSLAsMap;
 
@@ -20,6 +21,7 @@ contract Manager {
     // deploy a new SLA contract
     function createSLAContract(string memory _name) public {
         address slaAddress = address(new SLA(_name, randomContractAddress));
+        slaCount++;
         allSLAs.push(slaAddress);
         allSLAsMap[slaAddress] = true;
         providerSLAs[msg.sender].push(slaAddress);

@@ -23,8 +23,10 @@ contract SLA {
     address public manager;
     IRandom randomContract;
     IManager managerContract;
+    uint256 public consumersCount;
     Consumer[] public consumers;
     mapping(address => Consumer) consumersMap;
+    uint256 public invitesCount;
     Invite[] public invites;
     mapping(string => Invite) public invitesMap;
 
@@ -55,6 +57,7 @@ contract SLA {
         string memory randomString = randomContract.randomString(7);
         Invite memory invite = Invite(block.timestamp + 1 days, randomString, _ref);
         invitesMap[randomString] = invite;
+        invitesCount++;
         invites.push(invite);
         emit InviteGenerated(randomString);
     }
@@ -65,6 +68,7 @@ contract SLA {
         delete invitesMap[_inviteString];
         Consumer memory consumer = Consumer(msg.sender, invitesMap[_inviteString].ref, _validity);
         consumersMap[msg.sender] = consumer;
+        consumersCount++;
         consumers.push(consumer);
         managerContract.addConsumer(msg.sender);
     }
