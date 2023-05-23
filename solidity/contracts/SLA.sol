@@ -64,7 +64,7 @@ contract SLA {
 
     function acceptInvitation(string memory _inviteString, uint256 _validity) public {
         require(msg.sender != owner, "Provider cannot consume");
-        require(invitesMap[_inviteString].validity < block.timestamp, "Invalid invite");
+        require(invitesMap[_inviteString].validity > block.timestamp, "Invalid invite");
         delete invitesMap[_inviteString];
         Consumer memory consumer = Consumer(msg.sender, invitesMap[_inviteString].ref, _validity);
         consumersMap[msg.sender] = consumer;
