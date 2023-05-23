@@ -5,10 +5,10 @@ import "./SLA.sol";
 
 contract Manager {
     address randomContractAddress;
-    mapping(address => address[]) providerSLAs;
-    mapping(address => address[]) consumerSLAs;
-    uint256 public slaCount;
+    mapping(address => address[]) public providerSLAs;
+    mapping(address => address[]) public consumerSLAs;
     address[] public allSLAs;
+    mapping(address => bool) public allSLAsMap;
 
     // events
     event SLAContractCreated(address indexed newContract);
@@ -17,24 +17,18 @@ contract Manager {
         randomContractAddress = _randomContractAddress;
     }
 
-    function getProviderSLAs(address _provider) public view returns (address[] memory) {
-        return providerSLAs[_provider];
-    }
-
-    function getConsumerSLAs(address _consumer) public view returns (address[] memory) {
-        return consumerSLAs[_consumer];
-    }
-
-    function getAllSLAs() public view returns (address[] memory) {
-        return allSLAs;
-    }
-
     // deploy a new SLA contract
     function createSLAContract(string memory _name) public {
         address slaAddress = address(new SLA(_name, randomContractAddress));
         allSLAs.push(slaAddress);
-        slaCount++;
+        allSLAsMap[slaAddress] = true;
         providerSLAs[msg.sender].push(slaAddress);
         emit SLAContractCreated(slaAddress);
+    }
+
+    // sla can call this function to add a consumer
+    function addConsumer(address _consumerAddress) public {
+        require(allSLAsMap[msg.sender] == true, "Only SLA providers can add consumers");
+        consumerSLAs[_consumerAddress].push(msg.sender);
     }
 }

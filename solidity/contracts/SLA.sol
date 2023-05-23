@@ -2,23 +2,38 @@
 pragma solidity ^0.8.9;
 
 import "../interfaces/IRandom.sol";
+import "../interfaces/IManager.sol";
 
 contract SLA {
+
+    struct Consumer {
+        address consumerAddress;
+        string ref;
+        uint256 contractValidity;
+    }
+
+    struct Invite {
+        uint256 validity;
+        string inviteString;
+        string ref;
+    }
+
     string public name;
     address public owner;
     address public manager;
-    mapping(address => bool) consumers;
-    // struct invites => validity, inviteString, ref
-    // strcut consumer => address, ref, validity
-    mapping(string => bool) public invites;
-    IRandom random;
+    IRandom randomContract;
+    IManager managerContract;
+    Consumer[] public consumers;
+    mapping(address => Consumer) consumersMap;
+    Invite[] public invites;
+    mapping(string => Invite) public invitesMap;
 
     event InviteGenerated(string inviteString);
 
     constructor(string memory _name, address randomContractAddress) {
         owner = tx.origin;
         manager = msg.sender;
-        random = IRandom(randomContractAddress); // remove this
+        randomContract = IRandom(randomContractAddress);
         name = _name;
     }
 
@@ -32,22 +47,25 @@ contract SLA {
         _;
     }
 
-    function canConsume() public view returns (bool) {
-        return consumers[msg.sender];
+    function canConsume(address _consumer) public view returns (bool) {
+        return consumersMap[_consumer].contractValidity > block.timestamp;
     }
 
-    function inviteConsumer() public onlyOwner {
-        string memory randomString = random.randomString(7);
-        require(invites[randomString] == false, "Duplicate invite"); // Need to change approach
-        invites[randomString] = true;
+    function inviteConsumer(string memory _ref) public onlyOwner {
+        string memory randomString = randomContract.randomString(7);
+        Invite memory invite = Invite(block.timestamp + 1 days, randomString, _ref);
+        invitesMap[randomString] = invite;
+        invites.push(invite);
         emit InviteGenerated(randomString);
     }
 
-    function acceptInvitation(string memory _inviteString) public {
+    function acceptInvitation(string memory _inviteString, uint256 _validity) public {
         require(msg.sender != owner, "Provider cannot consume");
-        require(invites[_inviteString] == true, "Invalid invite");
-        delete invites[_inviteString];
-        consumers[msg.sender] = true;
-        // add consumer to manager
+        require(invitesMap[_inviteString].validity < block.timestamp, "Invalid invite");
+        delete invitesMap[_inviteString];
+        Consumer memory consumer = Consumer(msg.sender, invitesMap[_inviteString].ref, _validity);
+        consumersMap[msg.sender] = consumer;
+        consumers.push(consumer);
+        managerContract.addConsumer(msg.sender);
     }
 }
