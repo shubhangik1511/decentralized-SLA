@@ -36,8 +36,11 @@ const ContractsTable = () => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {!isError &&
-            !isLoading &&
+          {!isError && !isLoading && (data as Contract[]).length === 0 ? (
+            <TableCell align='center' colSpan={3}>
+              No data found.
+            </TableCell>
+          ) : (
             (data as Contract[]).map(row => (
               <TableRow
                 key={row.name}
@@ -53,7 +56,8 @@ const ContractsTable = () => {
                 <TableCell align='center'>{row.slaAddress}</TableCell>
                 <TableCell align='right'>{row.createdAt}</TableCell>
               </TableRow>
-            ))}
+            ))
+          )}
         </TableBody>
       </Table>
     </TableContainer>

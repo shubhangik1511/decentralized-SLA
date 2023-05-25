@@ -36,8 +36,11 @@ const SLAsTable = () => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {!isError &&
-            !isLoading &&
+          {!isError && !isLoading && (data as SLA[]).length === 0 ? (
+            <TableCell align='center' colSpan={3}>
+              No data found.
+            </TableCell>
+          ) : (
             (data as SLA[]).map(row => (
               <TableRow
                 key={row.name}
@@ -53,7 +56,8 @@ const SLAsTable = () => {
                 <TableCell align='center'>{row.slaAddress}</TableCell>
                 <TableCell align='right'>{row.createdAt}</TableCell>
               </TableRow>
-            ))}
+            ))
+          )}
         </TableBody>
       </Table>
     </TableContainer>
