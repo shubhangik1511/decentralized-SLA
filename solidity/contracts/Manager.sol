@@ -33,4 +33,16 @@ contract Manager {
         require(allSLAsMap[msg.sender] == true, "Only SLA providers can add consumers");
         consumerSLAs[_consumerAddress].push(msg.sender);
     }
+
+    function getProviderSLAs(address _providerAddress) public view returns (address[] memory) {
+        return providerSLAs[_providerAddress];
+    }
+
+    function getConsumerSLAs(address _consumerAddress) public view returns (address[] memory) {
+        return consumerSLAs[_consumerAddress];
+    }
+
+    function getAllSLAs() public view returns (address[] memory) {
+        return allSLAs;
+    }
 }
