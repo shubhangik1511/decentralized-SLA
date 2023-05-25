@@ -4,11 +4,16 @@ pragma solidity ^0.8.9;
 import "./SLA.sol";
 
 contract Manager {
+    struct SLAContract {
+        address slaAddress;
+        string name;
+        uint256 createdAt;
+    }
     address randomContractAddress;
-    mapping(address => address[]) public providerSLAs;
-    mapping(address => address[]) public consumerSLAs;
+    mapping(address => SLAContract[]) public providerSLAs;
+    mapping(address => SLAContract[]) public consumerSLAs;
     uint256 public slaCount;
-    address[] public allSLAs;
+    SLAContract[] public allSLAs;
     mapping(address => bool) public allSLAsMap;
 
     // events
@@ -22,27 +27,29 @@ contract Manager {
     function createSLAContract(string memory _name) public {
         address slaAddress = address(new SLA(_name, randomContractAddress));
         slaCount++;
-        allSLAs.push(slaAddress);
+        SLAContract memory sla = SLAContract(slaAddress, _name, block.timestamp);
+        allSLAs.push(sla);
         allSLAsMap[slaAddress] = true;
-        providerSLAs[msg.sender].push(slaAddress);
+        providerSLAs[msg.sender].push(sla);
         emit SLAContractCreated(slaAddress);
     }
 
     // sla can call this function to add a consumer
-    function addConsumer(address _consumerAddress) public {
+    function addConsumer(address _consumerAddress, string memory _slaName) public {
         require(allSLAsMap[msg.sender] == true, "Only SLA providers can add consumers");
-        consumerSLAs[_consumerAddress].push(msg.sender);
+        SLAContract memory sla = SLAContract(msg.sender, _slaName, block.timestamp);
+        consumerSLAs[_consumerAddress].push(sla);
     }
 
-    function getProviderSLAs(address _providerAddress) public view returns (address[] memory) {
+    function getProviderSLAs(address _providerAddress) public view returns (SLAContract[] memory) {
         return providerSLAs[_providerAddress];
     }
 
-    function getConsumerSLAs(address _consumerAddress) public view returns (address[] memory) {
+    function getConsumerSLAs(address _consumerAddress) public view returns (SLAContract[] memory) {
         return consumerSLAs[_consumerAddress];
     }
 
-    function getAllSLAs() public view returns (address[] memory) {
+    function getAllSLAs() public view returns (SLAContract[] memory) {
         return allSLAs;
     }
 }
