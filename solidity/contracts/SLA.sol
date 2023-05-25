@@ -71,6 +71,6 @@ contract SLA {
         consumersCount++;
         consumers.push(consumer);
         delete invitesMap[_inviteString];
-        managerContract.addConsumer(msg.sender);
+        managerContract.addConsumer(msg.sender, name);
     }
 }
