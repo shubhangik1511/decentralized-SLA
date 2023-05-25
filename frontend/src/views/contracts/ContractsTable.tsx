@@ -6,6 +6,7 @@ import TableHead from '@mui/material/TableHead'
 import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
 import TableContainer from '@mui/material/TableContainer'
+import OpenInNew from 'mdi-material-ui/OpenInNew'
 
 import { useContractRead, useAccount } from 'wagmi'
 import managerAbi from 'src/@core/abi/ManagerAbi.json'
@@ -36,7 +37,7 @@ const ContractsTable = () => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {!isError && !isLoading && (data as Contract[]).length === 0 ? (
+          {!isError && !isLoading && data && (data as Contract[]).length === 0 ? (
             <TableCell align='center' colSpan={3}>
               No data found.
             </TableCell>
@@ -53,8 +54,19 @@ const ContractsTable = () => {
                 <TableCell component='th' scope='row'>
                   {row.name}
                 </TableCell>
-                <TableCell align='center'>{row.slaAddress}</TableCell>
-                <TableCell align='right'>{row.createdAt}</TableCell>
+                <TableCell align='center'>
+                  <>
+                    {row.slaAddress}
+                    <OpenInNew
+                      sx={{ marginLeft: 1, fontSize: 16 }}
+                      cursor='pointer'
+                      onClick={() =>
+                        window.open(`${process.env.NEXT_PUBLIC_EXPLORER_URL}/address/${row.slaAddress}`, '_blank')
+                      }
+                    />
+                  </>
+                </TableCell>
+                <TableCell align='left'>{row.createdAt}</TableCell>
               </TableRow>
             ))
           )}
