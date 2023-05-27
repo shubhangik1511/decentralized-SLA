@@ -95,7 +95,7 @@ const SLAsTable = () => {
                       variant='outlined'
                       size='small'
                       sx={{ marginBottom: 2, width: '100%' }}
-                      onClick={() => router.push('/view-invite')}
+                      onClick={() => router.push(`/view-invite?sla=${row.slaAddress}`)}
                     >
                       <AccountCheck fontSize='small' sx={{ marginRight: 1 }} />
                       View Invitations
@@ -105,7 +105,7 @@ const SLAsTable = () => {
                       variant='outlined'
                       size='small'
                       sx={{ width: '100%' }}
-                      onClick={() => router.push('/view-consumer')}
+                      onClick={() => router.push(`/view-consumer?sla=${row.slaAddress}`)}
                     >
                       <AccountGroup fontSize='small' sx={{ marginRight: 1 }} />
                       View Consumers
