@@ -7,7 +7,7 @@ import "./FunctionsConsumer.sol";
 contract Manager {
     struct SLAContract {
         address slaAddress;
-        string name;
+        string name; // name to identify the SLA for providers and the contract for consumers
         uint256 createdAt;
     }
     mapping(address => SLAContract[]) private providerSLAs;
