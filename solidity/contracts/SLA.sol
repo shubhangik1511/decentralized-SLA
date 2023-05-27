@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.9;
 
-import "../interfaces/IRandom.sol";
 import "../interfaces/IManager.sol";
 import "./FunctionsConsumer.sol";
 
@@ -21,7 +20,6 @@ contract SLA {
     string public name;
     address public owner;
     address public manager;
-    IRandom randomContract;
     IManager managerContract;
     uint256 public consumersCount;
     Consumer[] public consumers;
@@ -36,12 +34,10 @@ contract SLA {
 
     constructor(
         string memory _name,
-        address randomContractAddress,
         address _functionsConsumerContractAddress
     ) {
         owner = tx.origin;
         manager = msg.sender;
-        randomContract = IRandom(randomContractAddress);
         managerContract = IManager(manager);
         functionsConsumerContract = FunctionsConsumer(
             _functionsConsumerContractAddress

@@ -10,22 +10,16 @@ contract Manager {
         string name;
         uint256 createdAt;
     }
-    address randomContractAddress;
-    mapping(address => SLAContract[]) public providerSLAs;
-    mapping(address => SLAContract[]) public consumerSLAs;
-    uint256 public slaCount;
+    mapping(address => SLAContract[]) private providerSLAs;
+    mapping(address => SLAContract[]) private consumerSLAs;
     SLAContract[] public allSLAs;
-    mapping(address => bool) public allSLAsMap;
+    mapping(address => bool) private allSLAsMap;
     FunctionsConsumer public functionsConsumerContract;
 
     // events
     event SLAContractCreated(address indexed newContract);
 
-    constructor(
-        address _randomContractAddress,
-        address _functionsConsumerContractAddress
-    ) {
-        randomContractAddress = _randomContractAddress;
+    constructor(address _functionsConsumerContractAddress) {
         functionsConsumerContract = FunctionsConsumer(
             _functionsConsumerContractAddress
         );
@@ -36,11 +30,9 @@ contract Manager {
         address slaAddress = address(
             new SLA(
                 _name,
-                randomContractAddress,
                 address(functionsConsumerContract)
             )
         );
-        slaCount++;
         SLAContract memory sla = SLAContract(
             slaAddress,
             _name,
