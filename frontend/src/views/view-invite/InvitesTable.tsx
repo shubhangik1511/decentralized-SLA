@@ -39,13 +39,15 @@ const InvitesTable = () => {
     }
   }, [router])
 
+  console.log(data)
+
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} aria-label='simple table'>
         <TableHead>
           <TableRow>
-            <TableCell align='center'>Invite String</TableCell>
-            <TableCell align='center'>Ref</TableCell>
+            <TableCell align='left'>Invite String</TableCell>
+            <TableCell align='left'>Ref</TableCell>
             <TableCell align='center'>Validity</TableCell>
           </TableRow>
         </TableHead>
@@ -66,9 +68,12 @@ const InvitesTable = () => {
                   }}
                 >
                   <TableCell component='th' scope='row'>
+                    {row.inviteString}
+                  </TableCell>
+                  <TableCell component='th' scope='row'>
                     {row.ref}
                   </TableCell>
-                  <TableCell align='center'>{row.validity}</TableCell>
+                  <TableCell align='center'>{new Date(Number(row.validity) * 1000).toDateString()}</TableCell>
                 </TableRow>
               ))
             ))}
