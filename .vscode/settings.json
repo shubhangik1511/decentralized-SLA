@@ -38,6 +38,6 @@
   "search-node-modules.path": "typescript-version/full-version/node_modules",
   "markdown.extension.toc.updateOnSave": false,
   "[solidity]": {
-    "editor.defaultFormatter": "NomicFoundation.hardhat-solidity"
+    "editor.defaultFormatter": "JuanBlanco.solidity"
   }
 }

@@ -34,16 +34,21 @@ const requestConfig = {
   // Secrets can be accessed within the source code with `secrets.varName` (ie: secrets.apiKey). The secrets object can only contain string values.
   secrets: { courierApiKey: process.env.COURIER_API_KEY ?? "" },
   // Per-node secrets objects assigned to each DON member. When using per-node secrets, nodes can only use secrets which they have been assigned.
-  perNodeSecrets: [],
+  perNodeSecrets: [
+    { courierApiKey: process.env.COURIER_API_KEY ?? "" },
+    { courierApiKey: "" },
+    { courierApiKey: "" },
+    { courierApiKey: "" },
+  ],
   // ETH wallet key used to sign secrets so they cannot be accessed by a 3rd party
   walletPrivateKey: process.env["PRIVATE_KEY"],
   // Args (string only array) can be accessed within the source code with `args[index]` (ie: args[0]).
   args: ["bchaitanya15@gmail.com", "http://example.com/hello"],
   // Expected type of the returned value
-  expectedReturnType: ReturnType.uint256,
+  expectedReturnType: ReturnType.string,
   // Redundant URLs which point to encrypted off-chain secrets
   secretsURLs: [
-    "https://gist.githubusercontent.com/negative0/645b8670eae36e45d13691ca1fe81f6d/raw",
+    // "https://gist.githubusercontent.com/negative0/645b8670eae36e45d13691ca1fe81f6d/raw",
   ],
 };
 

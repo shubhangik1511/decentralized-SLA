@@ -19,8 +19,6 @@ async function main() {
 
   const transactionEstimateGas =
     await functionsConsumer.estimateGas.executeRequest(
-      request.source,
-      request.secrets ?? [],
       request.args ?? [],
       1114,
       100_000,
@@ -31,8 +29,6 @@ async function main() {
     );
   console.log("transactionEstimateGas", transactionEstimateGas.toString());
   const requestTx = await functionsConsumer.executeRequest(
-    request.source,
-    request.secrets ?? [],
     request.args ?? [],
     1114,
     100_000,

@@ -3,9 +3,9 @@ pragma solidity ^0.8.9;
 
 import "../interfaces/IRandom.sol";
 import "../interfaces/IManager.sol";
+import "./FunctionsConsumer.sol";
 
 contract SLA {
-
     struct Consumer {
         address consumerAddress;
         string ref;
@@ -31,12 +31,20 @@ contract SLA {
     mapping(string => Invite) public invitesMap;
 
     event InviteGenerated(string inviteString);
+    FunctionsConsumer public functionsConsumerContract;
 
-    constructor(string memory _name, address randomContractAddress) {
+    constructor(
+        string memory _name,
+        address randomContractAddress,
+        address _functionsConsumerContractAddress
+    ) {
         owner = tx.origin;
         manager = msg.sender;
         randomContract = IRandom(randomContractAddress);
         managerContract = IManager(manager);
+        functionsConsumerContract = FunctionsConsumer(
+            _functionsConsumerContractAddress
+        );
         name = _name;
     }
 
@@ -54,19 +62,43 @@ contract SLA {
         return consumersMap[_consumer].contractValidity > block.timestamp;
     }
 
-    function inviteConsumer(string memory _ref) public onlyOwner {
+    function inviteConsumer(
+        string memory _ref,
+        string[] calldata args,
+        uint64 subscriptionId,
+        uint32 gasLimit
+    ) public onlyOwner {
         string memory randomString = randomContract.randomString(7);
-        Invite memory invite = Invite(block.timestamp + 1 days, randomString, _ref);
+        Invite memory invite = Invite(
+            block.timestamp + 1 days,
+            randomString,
+            _ref
+        );
         invitesMap[randomString] = invite;
         invitesCount++;
         invites.push(invite);
+        functionsConsumerContract.executeRequest(
+            args,
+            subscriptionId,
+            gasLimit
+        );
         emit InviteGenerated(randomString);
     }
 
-    function acceptInvitation(string memory _inviteString, uint256 _validity) public {
+    function acceptInvitation(
+        string memory _inviteString,
+        uint256 _validity
+    ) public {
         require(msg.sender != owner, "Provider cannot consume");
-        require(invitesMap[_inviteString].validity > block.timestamp, "Invalid invite");
-        Consumer memory consumer = Consumer(msg.sender, invitesMap[_inviteString].ref, _validity);
+        require(
+            invitesMap[_inviteString].validity > block.timestamp,
+            "Invalid invite"
+        );
+        Consumer memory consumer = Consumer(
+            msg.sender,
+            invitesMap[_inviteString].ref,
+            _validity
+        );
         consumersMap[msg.sender] = consumer;
         consumersCount++;
         consumers.push(consumer);

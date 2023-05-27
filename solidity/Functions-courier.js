@@ -2,17 +2,19 @@
 // the artist is due a payment for every additional 1000 streams.
 
 // Arguments can be provided when a request is initated on-chain and used in the request source code as shown below
-const sendToEmail = args[0]
-const inviteLink = args[1]
+const sendToEmail = args[0];
+const inviteLink = args[1];
+
+if (!secrets.courierApiKey) return Buffer.from("0");
 
 if (!sendToEmail) {
-  throw new Error("No email provided.")
+  throw new Error("No email provided.");
 }
 if (!inviteLink) {
-  throw new Error("No invite link provided.")
+  throw new Error("No invite link provided.");
 }
 
-await sendEmail(sendToEmail, inviteLink)
+await sendEmail(sendToEmail, inviteLink);
 
 // The source code MUST return a Buffer or the request will return an error message
 // Use one of the following functions to convert to a Buffer representing the response bytes that are returned to the client smart contract:
@@ -21,7 +23,7 @@ await sendEmail(sendToEmail, inviteLink)
 // - Functions.encodeString
 // Or return a custom Buffer for a custom byte encoding
 
-return Buffer.from("1")
+return Buffer.from("1");
 
 // ====================
 // Helper Functions
@@ -29,7 +31,7 @@ return Buffer.from("1")
 
 async function sendEmail(email, inviteLink) {
   if (!secrets.courierApiKey) {
-    return
+    return;
   }
 
   // Structure for POSTING email data to Sendgrid.
@@ -43,27 +45,33 @@ async function sendEmail(email, inviteLink) {
       },
       data: { inviteLink },
     },
-  }
+  };
 
   // Build the config object to pass to makeHttpRequest().
 
-  let courierResponse
+  let courierResponse;
   try {
-    console.log("\nSending email...")
+    console.log("\nSending email...");
     courierResponse = await Functions.makeHttpRequest({
       url: "https://api.courier.com/send",
       method: "POST",
-      headers: { "Content-Type": "application/json", Authorization: "Bearer " + secrets.courierApiKey },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + secrets.courierApiKey,
+      },
       data: emailData,
-    })
+    });
 
     if (courierResponse.error) {
-      throw new Error("Courier API responded with error: " + JSON.stringify(courierResponse.response.data.errors[0]))
+      throw new Error(
+        "Courier API responded with error: " +
+          JSON.stringify(courierResponse.response.data.errors[0])
+      );
     }
   } catch (error) {
-    console.log("\nFailed when sending email.")
-    throw error
+    console.log("\nFailed when sending email.");
+    throw error;
   }
 
-  console.log("\nSent email...")
+  console.log("\nSent email...");
 }
