@@ -24,7 +24,7 @@ const SLAForm = () => {
     error: prepareError,
     isError: isPrepareError
   } = usePrepareContractWrite({
-    address: `0x${process.env.NEXT_PUBLIC_MANAGER_CONTRACT_ADDRESS}`,
+    address: process.env.NEXT_PUBLIC_MANAGER_CONTRACT_ADDRESS as `0x${string}`,
     abi: managerAbi,
     functionName: 'createSLAContract',
     args: [name]

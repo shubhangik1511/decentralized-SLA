@@ -20,7 +20,7 @@ interface Contract {
 const ContractsTable = () => {
   const { address } = useAccount()
   const { data, isError, isLoading } = useContractRead({
-    address: `0x${process.env.NEXT_PUBLIC_MANAGER_CONTRACT_ADDRESS}`,
+    address: process.env.NEXT_PUBLIC_MANAGER_CONTRACT_ADDRESS as `0x${string}`,
     abi: managerAbi,
     functionName: 'getConsumerSLAs',
     args: [address]

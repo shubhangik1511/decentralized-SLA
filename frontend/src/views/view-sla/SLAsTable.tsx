@@ -30,7 +30,7 @@ const SLAsTable = () => {
   const { address } = useAccount()
   const router = useRouter()
   const { data, isError, isLoading } = useContractRead({
-    address: `0x${process.env.NEXT_PUBLIC_MANAGER_CONTRACT_ADDRESS}`,
+    address: process.env.NEXT_PUBLIC_MANAGER_CONTRACT_ADDRESS as `0x${string}`,
     abi: managerAbi,
     functionName: 'getProviderSLAs',
     args: [address]
