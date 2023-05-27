@@ -79,7 +79,7 @@ const SLAsTable = () => {
                     </>
                   </TableCell>
                   <TableCell align='left'>{new Date(Number(row.createdAt) * 1000).toDateString()}</TableCell>
-                  <TableCell align='center' sx={{ maxWidth: '125px' }}>
+                  <TableCell align='center' sx={{ maxWidth: '140px' }}>
                     <Button
                       variant='outlined'
                       size='small'
