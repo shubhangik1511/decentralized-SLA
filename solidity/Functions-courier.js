@@ -1,20 +1,29 @@
-// This example shows how to make a fetch Artist monthly listener counts and trigger an email if
-// the artist is due a payment for every additional 1000 streams.
-
-// Arguments can be provided when a request is initated on-chain and used in the request source code as shown below
 const sendToEmail = args[0];
-const inviteLink = args[1];
 
-if (!secrets.courierApiKey) return Buffer.from("0");
+if (!secrets.courierApiKey) return Functions.encodeString("inviteLink");
 
 if (!sendToEmail) {
   throw new Error("No email provided.");
 }
-if (!inviteLink) {
-  throw new Error("No invite link provided.");
+
+// Generates a random string of a given length
+// Reference: https://stackoverflow.com/a/1349426/12027569
+function generateRandomString(length) {
+  let result = "";
+  const characters =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  const charactersLength = characters.length;
+  let counter = 0;
+  while (counter < length) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    counter += 1;
+  }
+  return result;
 }
 
-await sendEmail(sendToEmail, inviteLink);
+const inviteLink = generateRandomString(10);
+
+await sendEmail(sendToEmail, `http://localhost:3000/invite/${inviteLink}`);
 
 // The source code MUST return a Buffer or the request will return an error message
 // Use one of the following functions to convert to a Buffer representing the response bytes that are returned to the client smart contract:
@@ -23,7 +32,7 @@ await sendEmail(sendToEmail, inviteLink);
 // - Functions.encodeString
 // Or return a custom Buffer for a custom byte encoding
 
-return Buffer.from("1");
+return Functions.encodeString(inviteLink);
 
 // ====================
 // Helper Functions
@@ -34,8 +43,7 @@ async function sendEmail(email, inviteLink) {
     return;
   }
 
-  // Structure for POSTING email data to Sendgrid.
-  // Reference: https://docs.sendgrid.com/api-reference/mail-send/mail-send
+  // Structure for POSTING email data to Courier.
   const emailData = {
     message: {
       to: { email },

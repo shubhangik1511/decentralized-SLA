@@ -29,6 +29,7 @@ contract SLA {
     uint256 public invitesCount;
     Invite[] public invites;
     mapping(string => Invite) public invitesMap;
+    mapping(bytes32 => string) public requestIdRefMap;
 
     event InviteGenerated(string inviteString);
     FunctionsConsumer public functionsConsumerContract;
@@ -62,27 +63,44 @@ contract SLA {
         return consumersMap[_consumer].contractValidity > block.timestamp;
     }
 
+    modifier onlyFunctionsContract() {
+        require(
+            msg.sender == address(functionsConsumerContract),
+            "You are not the functions contract"
+        );
+        _;
+    }
+
+    function inviteSent(
+        bytes32 _requestId,
+        string calldata _inviteString
+    ) public onlyFunctionsContract {
+        string memory ref = requestIdRefMap[_requestId];
+        require(bytes(ref).length > 0, "Invalid requestId");
+        delete requestIdRefMap[_requestId];
+        Invite memory invite = Invite(
+            block.timestamp + 1 days,
+            _inviteString,
+            ref
+        );
+        invitesMap[_inviteString] = invite;
+        invitesCount++;
+        invites.push(invite);
+        emit InviteGenerated(_inviteString);
+    }
+
     function inviteConsumer(
         string memory _ref,
         string[] calldata args,
         uint64 subscriptionId,
         uint32 gasLimit
     ) public onlyOwner {
-        string memory randomString = randomContract.randomString(7);
-        Invite memory invite = Invite(
-            block.timestamp + 1 days,
-            randomString,
-            _ref
-        );
-        invitesMap[randomString] = invite;
-        invitesCount++;
-        invites.push(invite);
-        functionsConsumerContract.executeRequest(
+        bytes32 requestId = functionsConsumerContract.executeRequest(
             args,
             subscriptionId,
             gasLimit
         );
-        emit InviteGenerated(randomString);
+        requestIdRefMap[requestId] = _ref;
     }
 
     function acceptInvitation(

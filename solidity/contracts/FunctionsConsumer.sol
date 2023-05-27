@@ -5,6 +5,8 @@ import {Functions, FunctionsClient} from "./dev/functions/FunctionsClient.sol";
 // import "@chainlink/contracts/src/v0.8/dev/functions/FunctionsClient.sol"; // Once published
 import {ConfirmedOwner} from "@chainlink/contracts/src/v0.8/ConfirmedOwner.sol";
 
+import "./SLA.sol";
+
 contract FunctionsConsumer is FunctionsClient, ConfirmedOwner {
     using Functions for Functions.Request;
 
@@ -14,6 +16,7 @@ contract FunctionsConsumer is FunctionsClient, ConfirmedOwner {
 
     string public source;
     bytes secrets;
+    mapping(bytes32 => address) public requestIdSlaMap;
 
     mapping(address => bool) public authorizedRequesters;
 
@@ -77,6 +80,7 @@ contract FunctionsConsumer is FunctionsClient, ConfirmedOwner {
 
         bytes32 assignedReqID = sendRequest(req, subscriptionId, gasLimit);
         latestRequestId = assignedReqID;
+        requestIdSlaMap[assignedReqID] = msg.sender;
         return assignedReqID;
     }
 
@@ -95,6 +99,8 @@ contract FunctionsConsumer is FunctionsClient, ConfirmedOwner {
     ) internal override {
         latestResponse = response;
         latestError = err;
+        SLA slaContract = SLA(requestIdSlaMap[requestId]);
+        slaContract.inviteSent(requestId, string(response));
         emit OCRResponse(requestId, response, err);
     }
 
