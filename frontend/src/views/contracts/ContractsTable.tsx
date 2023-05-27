@@ -37,39 +37,40 @@ const ContractsTable = () => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {!isError && !isLoading && data && (data as Contract[]).length === 0 ? (
-            <TableCell align='center' colSpan={3}>
-              No data found.
-            </TableCell>
-          ) : (
-            (data as Contract[]).map(row => (
-              <TableRow
-                key={row.name}
-                sx={{
-                  '&:last-of-type td, &:last-of-type th': {
-                    border: 0
-                  }
-                }}
-              >
-                <TableCell component='th' scope='row'>
-                  {row.name}
-                </TableCell>
-                <TableCell align='center'>
-                  <>
-                    {row.slaAddress}
-                    <OpenInNew
-                      sx={{ marginLeft: 1, fontSize: 16 }}
-                      cursor='pointer'
-                      onClick={() =>
-                        window.open(`${process.env.NEXT_PUBLIC_EXPLORER_URL}/address/${row.slaAddress}`, '_blank')
-                      }
-                    />
-                  </>
-                </TableCell>
-                <TableCell align='left'>{row.createdAt}</TableCell>
-              </TableRow>
-            ))
-          )}
+          {data &&
+            (!isError && !isLoading && (data as Contract[]).length === 0 ? (
+              <TableCell align='center' colSpan={3}>
+                No data found.
+              </TableCell>
+            ) : (
+              (data as Contract[]).map(row => (
+                <TableRow
+                  key={row.name}
+                  sx={{
+                    '&:last-of-type td, &:last-of-type th': {
+                      border: 0
+                    }
+                  }}
+                >
+                  <TableCell component='th' scope='row'>
+                    {row.name}
+                  </TableCell>
+                  <TableCell align='center'>
+                    <>
+                      {row.slaAddress}
+                      <OpenInNew
+                        sx={{ marginLeft: 1, fontSize: 16 }}
+                        cursor='pointer'
+                        onClick={() =>
+                          window.open(`${process.env.NEXT_PUBLIC_EXPLORER_URL}/address/${row.slaAddress}`, '_blank')
+                        }
+                      />
+                    </>
+                  </TableCell>
+                  <TableCell align='left'>{new Date(Number(row.createdAt) * 1000).toDateString()}</TableCell>
+                </TableRow>
+              ))
+            ))}
         </TableBody>
       </Table>
     </TableContainer>
