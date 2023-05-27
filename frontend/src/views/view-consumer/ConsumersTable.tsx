@@ -44,8 +44,8 @@ const ConsumersTable = () => {
       <Table sx={{ minWidth: 650 }} aria-label='simple table'>
         <TableHead>
           <TableRow>
-            <TableCell align='center'>Consumer Address</TableCell>
-            <TableCell align='center'>Ref</TableCell>
+            <TableCell align='left'>Consumer Address</TableCell>
+            <TableCell align='left'>Ref</TableCell>
             <TableCell align='center'>Validity</TableCell>
           </TableRow>
         </TableHead>
@@ -66,9 +66,12 @@ const ConsumersTable = () => {
                   }}
                 >
                   <TableCell component='th' scope='row'>
+                    {row.consumerAddress}
+                  </TableCell>
+                  <TableCell component='th' scope='row'>
                     {row.ref}
                   </TableCell>
-                  <TableCell align='center'>{row.contractValidity}</TableCell>
+                  <TableCell align='center'>{new Date(Number(row.contractValidity) * 1000).toDateString()}</TableCell>
                 </TableRow>
               ))
             ))}
