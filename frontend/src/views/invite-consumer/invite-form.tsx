@@ -9,25 +9,32 @@ import AlertTitle from '@mui/material/AlertTitle'
 import IconButton from '@mui/material/IconButton'
 import CircularProgress from '@mui/material/CircularProgress'
 
+// ** Next Imports
+import { useRouter } from 'next/router'
+
 import Close from 'mdi-material-ui/Close'
 
 import { usePrepareContractWrite, useContractWrite, useWaitForTransaction } from 'wagmi'
-import managerAbi from 'src/@core/abi/ManagerAbi.json'
+import slaAbi from 'src/@core/abi/SlaAbi.json'
 
-const SLAForm = () => {
-  const [name, setName] = useState<string>('Sample Contract')
+const InviteForm = () => {
+  const [email, setEmail] = useState<string>('')
+  const [ref, setRef] = useState<string>('')
+  const [sla, setSla] = useState<string>('')
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [showError, setShowError] = useState<boolean>(false)
+  const router = useRouter()
 
   const {
     config,
     error: prepareError,
     isError: isPrepareError
   } = usePrepareContractWrite({
-    address: process.env.NEXT_PUBLIC_MANAGER_CONTRACT_ADDRESS as `0x${string}`,
-    abi: managerAbi,
-    functionName: 'createSLAContract',
-    args: [name]
+    address: sla as `0x${string}`,
+    abi: slaAbi,
+    functionName: 'inviteConsumer',
+    args: [ref, [email, 'https://google.com'], BigInt(1114), 300000],
+    gas: BigInt(1_500_000)
   })
   const { data, write } = useContractWrite(config)
 
@@ -39,6 +46,15 @@ const SLAForm = () => {
   } = useWaitForTransaction({
     hash: data?.hash
   })
+
+  useEffect(() => {
+    if (Object.keys(router.query).length > 0) {
+      const sla = router.query['sla']
+      if (sla) setSla((sla as string).trim())
+    } else {
+      router.push('/dashboard')
+    }
+  }, [router])
 
   useEffect(() => {
     if (isPrepareError || isError) {
@@ -62,6 +78,8 @@ const SLAForm = () => {
     write!()
   }
 
+  console.log(sla)
+
   return (
     <>
       {showError ? (
@@ -84,10 +102,17 @@ const SLAForm = () => {
           <Grid item xs={12} sm={6}>
             <TextField
               fullWidth
-              label='Name'
-              onChange={e => setName(e.target.value)}
-              placeholder='Name of the contract for reference'
-              defaultValue='Sample Contract'
+              label='Email'
+              onChange={e => setEmail(e.target.value)}
+              placeholder='Email of the consumer'
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              fullWidth
+              label='Ref'
+              onChange={e => setRef(e.target.value)}
+              placeholder='Reference (can be name)'
             />
           </Grid>
 
@@ -96,7 +121,7 @@ const SLAForm = () => {
               <CircularProgress />
             ) : (
               <Button variant='contained' type='submit' disabled={!write}>
-                Create
+                Invite
               </Button>
             )}
           </Grid>
@@ -106,4 +131,4 @@ const SLAForm = () => {
   )
 }
 
-export default SLAForm
+export default InviteForm

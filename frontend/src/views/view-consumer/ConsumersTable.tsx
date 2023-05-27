@@ -26,7 +26,7 @@ interface SLA {
   createdAt: string
 }
 
-const SLAsTable = () => {
+const ConsumersTable = () => {
   const { address } = useAccount()
   const router = useRouter()
   const { data, isError, isLoading } = useContractRead({
@@ -95,7 +95,7 @@ const SLAsTable = () => {
                       variant='outlined'
                       size='small'
                       sx={{ marginBottom: 2, width: '100%' }}
-                      onClick={() => router.push('/view-invite')}
+                      onClick={() => router.push('/view-invitations')}
                     >
                       <AccountCheck fontSize='small' sx={{ marginRight: 1 }} />
                       View Invitations
@@ -105,7 +105,7 @@ const SLAsTable = () => {
                       variant='outlined'
                       size='small'
                       sx={{ width: '100%' }}
-                      onClick={() => router.push('/view-consumer')}
+                      onClick={() => router.push('/view-consumers')}
                     >
                       <AccountGroup fontSize='small' sx={{ marginRight: 1 }} />
                       View Consumers
@@ -120,4 +120,4 @@ const SLAsTable = () => {
   )
 }
 
-export default SLAsTable
+export default ConsumersTable
