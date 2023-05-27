@@ -18,9 +18,9 @@ import { usePrepareContractWrite, useContractWrite, useWaitForTransaction } from
 import slaAbi from 'src/@core/abi/SlaAbi.json'
 
 const InviteForm = () => {
-  const [email, setEmail] = useState<string>('')
-  const [ref, setRef] = useState<string>('')
   const [sla, setSla] = useState<string>('')
+  const [ref, setRef] = useState<string>('')
+  const [link, setLink] = useState<string>('')
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [showError, setShowError] = useState<boolean>(false)
   const router = useRouter()
@@ -32,8 +32,8 @@ const InviteForm = () => {
   } = usePrepareContractWrite({
     address: sla as `0x${string}`,
     abi: slaAbi,
-    functionName: 'inviteConsumer',
-    args: [ref, [email, `${process.env.NEXT_PUBLIC_BASE_URL}?sla=${sla}`], BigInt(1114), 300000],
+    functionName: 'acceptInvitation',
+    args: [link, ref, 1795216892],
     gas: BigInt(1_500_000)
   })
   const { data, write } = useContractWrite(config)
@@ -48,11 +48,13 @@ const InviteForm = () => {
   })
 
   useEffect(() => {
-    if (Object.keys(router.query).length > 0) {
+    if (Object.keys(router.query).length > 1) {
+      const link = router.query['link']
+      if (link) setLink((link as string).trim())
       const sla = router.query['sla']
       if (sla) setSla((sla as string).trim())
     } else {
-      router.push('/dashboard')
+      router.push('/')
     }
   }, [router])
 
@@ -78,8 +80,6 @@ const InviteForm = () => {
     write!()
   }
 
-  console.log(sla)
-
   return (
     <>
       {showError ? (
@@ -102,14 +102,6 @@ const InviteForm = () => {
           <Grid item xs={12} sm={6}>
             <TextField
               fullWidth
-              label='Email'
-              onChange={e => setEmail(e.target.value)}
-              placeholder='Email of the consumer'
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              fullWidth
               label='Ref'
               onChange={e => setRef(e.target.value)}
               placeholder='Reference (can be name)'
@@ -121,7 +113,7 @@ const InviteForm = () => {
               <CircularProgress />
             ) : (
               <Button variant='contained' type='submit' disabled={!write}>
-                Invite
+                Accept Invite
               </Button>
             )}
           </Grid>

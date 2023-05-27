@@ -1,9 +1,14 @@
 const sendToEmail = args[0];
+const inviteAcceptLink = args[1];
 
 if (!secrets.courierApiKey) return Functions.encodeString("inviteLink");
 
 if (!sendToEmail) {
   throw new Error("No email provided.");
+}
+
+if (!inviteLink) {
+  throw new Error("No invite link provided.");
 }
 
 // Generates a random string of a given length
@@ -23,7 +28,7 @@ function generateRandomString(length) {
 
 const inviteLink = generateRandomString(10);
 
-await sendEmail(sendToEmail, `http://localhost:3000/invite/${inviteLink}`);
+await sendEmail(sendToEmail, `${inviteAcceptLink}&link=${inviteLink}`);
 
 // The source code MUST return a Buffer or the request will return an error message
 // Use one of the following functions to convert to a Buffer representing the response bytes that are returned to the client smart contract:
