@@ -121,12 +121,12 @@ contract SLA {
         );
         Consumer memory consumer = Consumer(
             msg.sender,
-            _ref,
+            invitesMap[_inviteString].ref,
             _validity
         );
         consumersMap[msg.sender] = consumer;
         consumers.push(consumer);
         delete invitesMap[_inviteString];
-        managerContract.addConsumer(msg.sender, name);
+        managerContract.addConsumer(msg.sender, _ref);
     }
 }
