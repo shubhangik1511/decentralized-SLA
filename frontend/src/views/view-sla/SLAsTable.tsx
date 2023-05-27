@@ -50,7 +50,7 @@ const SLAsTable = () => {
         <TableBody>
           {data &&
             (!isError && !isLoading && (data as SLA[]).length === 0 ? (
-              <TableCell align='center' colSpan={3}>
+              <TableCell align='center' colSpan={4}>
                 No data found.
               </TableCell>
             ) : (
@@ -78,7 +78,7 @@ const SLAsTable = () => {
                       />
                     </>
                   </TableCell>
-                  <TableCell align='left'>{new Date(Number(row.createdAt) * 1000).toDateString()}</TableCell>
+                  <TableCell align='center'>{new Date(Number(row.createdAt) * 1000).toDateString()}</TableCell>
                   <TableCell align='center' sx={{ maxWidth: '140px' }}>
                     <Button
                       variant='outlined'
