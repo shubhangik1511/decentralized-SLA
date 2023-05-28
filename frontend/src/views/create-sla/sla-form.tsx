@@ -5,6 +5,10 @@ import Grid from '@mui/material/Grid'
 import TextField from '@mui/material/TextField'
 import Button from '@mui/material/Button'
 import Alert from '@mui/material/Alert'
+import Select from '@mui/material/Select'
+import FormControl from '@mui/material/FormControl'
+import MenuItem from '@mui/material/MenuItem'
+import InputLabel from '@mui/material/InputLabel'
 import AlertTitle from '@mui/material/AlertTitle'
 import IconButton from '@mui/material/IconButton'
 import CircularProgress from '@mui/material/CircularProgress'
@@ -14,8 +18,18 @@ import Close from 'mdi-material-ui/Close'
 import { usePrepareContractWrite, useContractWrite, useWaitForTransaction } from 'wagmi'
 import managerAbi from 'src/@core/abi/ManagerAbi.json'
 
+const periods = [
+  { id: '5min', name: '5 mins', value: 5 * 60 },
+  { id: '1day', name: '1 Day', value: 24 * 60 * 60 },
+  { id: '1month', name: '1 Month', value: 30 * 24 * 60 * 60 },
+  { id: '3months', name: '3 Months', value: 3 * 30 * 24 * 60 * 60 },
+  { id: '6months', name: '6 Months', value: 6 * 30 * 24 * 60 * 60 },
+  { id: '1year', name: '1 Year', value: 12 * 30 * 24 * 60 * 60 }
+]
+
 const SLAForm = () => {
   const [name, setName] = useState<string>('Sample Contract')
+  const [period, setPeriod] = useState<number>(30 * 24 * 60 * 60)
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [showError, setShowError] = useState<boolean>(false)
 
@@ -27,7 +41,7 @@ const SLAForm = () => {
     address: process.env.NEXT_PUBLIC_MANAGER_CONTRACT_ADDRESS as `0x${string}`,
     abi: managerAbi,
     functionName: 'createSLAContract',
-    args: [name, 95216892]
+    args: [name, period]
   })
   const { data, write } = useContractWrite(config)
 
@@ -89,6 +103,18 @@ const SLAForm = () => {
               placeholder='Name of the contract for reference'
               defaultValue='Sample Contract'
             />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <FormControl fullWidth>
+              <InputLabel>Period</InputLabel>
+              <Select label='Period' defaultValue={30 * 24 * 60 * 60} onChange={e => setPeriod(Number(e.target.value))}>
+                {periods.map(period => (
+                  <MenuItem key={period.id} value={period.value}>
+                    {period.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
           </Grid>
 
           <Grid item xs={12}>
