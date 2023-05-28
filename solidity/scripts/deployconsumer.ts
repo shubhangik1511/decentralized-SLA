@@ -8,6 +8,7 @@ const {
 } = require("../FunctionsSandboxLibrary");
 const { generateOffchainSecrets } = require("./utils/generateOffchainSecrets");
 const { createGist } = require("./utils/github");
+import fs from "fs";
 
 const networkName = hre.network.name as keyof typeof networks;
 const network = networks[networkName];
@@ -94,7 +95,7 @@ async function main() {
     "FunctionsConsumer"
   );
   const request = await generateRequest(courierRequestConfig);
-  console.log(request);
+  // console.log(request);
 
   const functionsConsumer = await FunctionsConsumer.deploy(
     network.functionsOracleProxy,
