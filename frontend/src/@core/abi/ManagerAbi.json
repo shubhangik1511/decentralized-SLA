@@ -76,6 +76,11 @@
         "internalType": "string",
         "name": "_name",
         "type": "string"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_period",
+        "type": "uint256"
       }
     ],
     "name": "createSLAContract",

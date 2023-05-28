@@ -7,7 +7,7 @@ if (!sendToEmail) {
   throw new Error("No email provided.");
 }
 
-if (!inviteLink) {
+if (!inviteAcceptLink) {
   throw new Error("No invite link provided.");
 }
 

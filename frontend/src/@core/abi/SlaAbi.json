@@ -7,6 +7,11 @@
                 "type": "string"
             },
             {
+                "internalType": "uint256",
+                "name": "_period",
+                "type": "uint256"
+            },
+            {
                 "internalType": "address",
                 "name": "_functionsConsumerContractAddress",
                 "type": "address"
@@ -39,11 +44,6 @@
                 "internalType": "string",
                 "name": "_ref",
                 "type": "string"
-            },
-            {
-                "internalType": "uint256",
-                "name": "_validity",
-                "type": "uint256"
             }
         ],
         "name": "acceptInvitation",
@@ -223,6 +223,19 @@
                 "internalType": "address",
                 "name": "",
                 "type": "address"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "period",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
             }
         ],
         "stateMutability": "view",

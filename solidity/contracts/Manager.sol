@@ -26,10 +26,11 @@ contract Manager {
     }
 
     // deploy a new SLA contract
-    function createSLAContract(string memory _name) public {
+    function createSLAContract(string memory _name, uint256 _period) public {
         address slaAddress = address(
             new SLA(
                 _name,
+                _period,
                 address(functionsConsumerContract)
             )
         );
