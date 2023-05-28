@@ -33,7 +33,7 @@ const InviteForm = () => {
     address: sla as `0x${string}`,
     abi: slaAbi,
     functionName: 'inviteConsumer',
-    args: [ref, [email, `${process.env.NEXT_PUBLIC_BASE_URL}?sla=${sla}`], BigInt(1114), 300000],
+    args: [ref, [email, `${process.env.NEXT_PUBLIC_BASE_URL}/accept-invite?sla=${sla}`], BigInt(1114), 300000],
     gas: BigInt(1_500_000)
   })
   const { data, write } = useContractWrite(config)
