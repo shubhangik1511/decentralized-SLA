@@ -33,7 +33,7 @@ const InviteForm = () => {
     address: sla as `0x${string}`,
     abi: slaAbi,
     functionName: 'acceptInvitation',
-    args: [link, ref, 1795216892],
+    args: [link, ref],
     gas: BigInt(1_500_000)
   })
   const { data, write } = useContractWrite(config)

@@ -27,7 +27,7 @@ const SLAForm = () => {
     address: process.env.NEXT_PUBLIC_MANAGER_CONTRACT_ADDRESS as `0x${string}`,
     abi: managerAbi,
     functionName: 'createSLAContract',
-    args: [name]
+    args: [name, 95216892]
   })
   const { data, write } = useContractWrite(config)
 

@@ -18,6 +18,7 @@ contract SLA {
     }
 
     string public name;
+    uint256 public period;
     address public owner;
     address public manager;
     Consumer[] private consumers;
@@ -34,6 +35,7 @@ contract SLA {
 
     constructor(
         string memory _name,
+        uint256 _period,
         address _functionsConsumerContractAddress
     ) {
         owner = tx.origin;
@@ -43,6 +45,7 @@ contract SLA {
             _functionsConsumerContractAddress
         );
         name = _name;
+        period = _period;
     }
 
     modifier onlyOwner() {
@@ -111,8 +114,7 @@ contract SLA {
     // consumer can call this function to accept invite
     function acceptInvitation(
         string memory _inviteString,
-        string memory _ref,
-        uint256 _validity
+        string memory _ref
     ) public {
         require(msg.sender != owner, "Provider cannot consume");
         require(
@@ -122,7 +124,7 @@ contract SLA {
         Consumer memory consumer = Consumer(
             msg.sender,
             invitesMap[_inviteString].ref,
-            _validity
+            block.timestamp + period
         );
         consumersMap[msg.sender] = consumer;
         consumers.push(consumer);
