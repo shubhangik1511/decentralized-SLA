@@ -7,7 +7,7 @@ const network = networks[networkName];
 async function main() {
   const ManagerContract = await ethers.getContractFactory("Manager");
   const manager = await ManagerContract.deploy(
-    "0x5c4B624675914A46a46d2098073266D6c4738927"
+    "0x9e13EAad45BeFb0E718a3d50F460706d4E703BF8"
   );
   await manager.deployed();
   console.log(`Manager deployed to ${manager.address}`);
@@ -21,7 +21,7 @@ async function main() {
   const sla = await ethers.getContractAt("SLA", slaContractAddress);
   // const sla = await ethers.getContractAt(
   //   "SLA",
-  //   "0x391b1e1D115b06bD23b3acbF4bA37e549D53D3e4"
+  //   "0xF5aC6ecC797871940b104e9E1E8334c36C8C76eB"
   // );
   console.log(`SLA deployed to ${sla.address}`);
 

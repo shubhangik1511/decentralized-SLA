@@ -12,13 +12,13 @@ if (!inviteAccepLinkPrefix) {
   throw new Error("No invite link provided.");
 }
 
-const inviteId = generateEncryptedString(
+const encryptedInvite = generateEncryptedString(
   `${generateStringUsingTs(timestamp)}/${sendToEmail}/${secrets.secretKey}`
 );
-const inviteHash = generateHash(inviteId);
+const inviteHash = generateHash(encryptedInvite);
 
 if (secrets.courierApiKey) {
-  const inviteLink = `${inviteAccepLinkPrefix}&code=${inviteId}&hash=${inviteHash}`;
+  const inviteLink = `${inviteAccepLinkPrefix}&code=${encryptedInvite}`;
   await sendEmail(sendToEmail, inviteLink);
 }
 
@@ -28,7 +28,7 @@ if (secrets.courierApiKey) {
 // - Functions.encodeInt256
 // - Functions.encodeString
 // Or return a custom Buffer for a custom byte encoding
-return Buffer.from(inviteHash);
+return Functions.encodeString(inviteHash);
 
 // ====================
 // Helper Functions
@@ -56,14 +56,12 @@ function generateEncryptedString(data) {
   let encryptedData = cipher.update(data, "utf-8", "hex");
 
   encryptedData += cipher.final("hex");
-  console.log("Encrypted message: " + encryptedData);
   return encryptedData;
 }
 
 // Function to generate hash using nodejs crypto
-// Reference: https://stackoverflow.com/a/67824801/12027569
 function generateHash(data) {
-  return crypto.createHash("sha256").update(data).digest("base64");
+  return crypto.createHash("ripemd160").update(data).digest("base64");
 }
 
 function generateStringUsingTs(timestamp) {

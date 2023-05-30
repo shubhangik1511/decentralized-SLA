@@ -13,7 +13,7 @@ contract SLA {
     }
 
     struct Invite {
-        string inviteString;
+        bytes inviteString;
         string ref; // ref to identify the consumers (for providers)
         uint256 validity;
     }
@@ -25,7 +25,7 @@ contract SLA {
     Consumer[] private consumers;
     mapping(address => Consumer) private consumersMap;
     Invite[] private invites;
-    mapping(string => Invite) private invitesMap;
+    mapping(bytes => Invite) private invitesMap;
     mapping(bytes32 => string) public requestIdRefMap;
 
     IManager managerContract;
@@ -33,7 +33,7 @@ contract SLA {
     string public latestError;
 
     // events
-    event InviteGenerated(string inviteString);
+    event InviteGenerated(bytes inviteString);
 
     constructor(
         string memory _name,
@@ -84,7 +84,7 @@ contract SLA {
     function inviteSent(
         bytes32 _requestId,
         bytes calldata err,
-        string calldata _inviteCode
+        bytes calldata _inviteCode
     ) public {
         string memory ref = requestIdRefMap[_requestId];
         require(bytes(ref).length > 0, "Invalid requestId");
@@ -118,24 +118,14 @@ contract SLA {
         requestIdRefMap[requestId] = _ref;
     }
 
-    // function bytes32ToString(
-    //     bytes32 value
-    // ) public pure returns (string memory) {
-    //     bytes memory bytesArray = new bytes(32);
-
-    //     for (uint256 i = 0; i < 32; i++) {
-    //         bytesArray[i] = value[i];
-    //     }
-
-    //     return string(bytesArray);
-    // }
-
     function getHash(
         string memory _inviteCode
-    ) public pure returns (string memory) {
+    ) public pure returns (bytes memory) {
         return
-            Base64.encode(
-                abi.encodePacked(sha256(abi.encodePacked(_inviteCode)))
+            bytes(
+                Base64.encode(
+                    abi.encodePacked(ripemd160(abi.encodePacked(_inviteCode)))
+                )
             );
     }
 
@@ -147,7 +137,7 @@ contract SLA {
         require(msg.sender != owner, "Provider cannot consume");
 
         // generate hash of _inviteCode
-        string memory inviteHash = getHash(_inviteCode);
+        bytes memory inviteHash = getHash(_inviteCode);
         require(
             invitesMap[inviteHash].validity > block.timestamp,
             "Invalid invite"
