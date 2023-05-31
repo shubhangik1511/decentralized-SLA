@@ -94,7 +94,6 @@ async function main() {
     "FunctionsConsumer"
   );
   const request = await generateRequest(courierRequestConfig);
-  console.log(request);
 
   const functionsConsumer = await FunctionsConsumer.deploy(
     network.functionsOracleProxy,

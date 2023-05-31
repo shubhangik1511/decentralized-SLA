@@ -32,18 +32,28 @@ const requestConfig = {
   source: fs.readFileSync("./Functions-courier.js").toString(),
   //source: fs.readFileSync('./API-request-example.js').toString(),
   // Secrets can be accessed within the source code with `secrets.varName` (ie: secrets.apiKey). The secrets object can only contain string values.
-  secrets: { courierApiKey: process.env.COURIER_API_KEY ?? "" },
+  secrets: {
+    courierApiKey: process.env.COURIER_API_KEY ?? "",
+    secretKey: process.env.SECRET_KEY ?? "",
+  },
   // Per-node secrets objects assigned to each DON member. When using per-node secrets, nodes can only use secrets which they have been assigned.
   perNodeSecrets: [
-    { courierApiKey: process.env.COURIER_API_KEY ?? "" },
-    { courierApiKey: "" },
-    { courierApiKey: "" },
-    { courierApiKey: "" },
+    {
+      courierApiKey: process.env.COURIER_API_KEY ?? "",
+      secretKey: process.env.SECRET_KEY ?? "",
+    },
+    { courierApiKey: "", secretKey: process.env.SECRET_KEY ?? "" },
+    { courierApiKey: "", secretKey: process.env.SECRET_KEY ?? "" },
+    { courierApiKey: "", secretKey: process.env.SECRET_KEY ?? "" },
   ],
   // ETH wallet key used to sign secrets so they cannot be accessed by a 3rd party
   walletPrivateKey: process.env["PRIVATE_KEY"],
   // Args (string only array) can be accessed within the source code with `args[index]` (ie: args[0]).
-  args: ["bchaitanya15@gmail.com", "http://example.com/hello"],
+  args: [
+    "bchaitanya15@gmail.com",
+    `http://localhost:3000/accept-invite?sla=<<sla>>`,
+    new Date().getTime().toString(),
+  ],
   // Expected type of the returned value
   expectedReturnType: ReturnType.string,
   // Redundant URLs which point to encrypted off-chain secrets

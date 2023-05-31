@@ -100,7 +100,7 @@ contract FunctionsConsumer is FunctionsClient, ConfirmedOwner {
         latestResponse = response;
         latestError = err;
         SLA slaContract = SLA(requestIdSlaMap[requestId]);
-        slaContract.inviteSent(requestId, string(response));
+        slaContract.inviteSent(requestId, err, response);
         emit OCRResponse(requestId, response, err);
     }
 

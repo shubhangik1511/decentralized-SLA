@@ -3,6 +3,7 @@ pragma solidity ^0.8.9;
 
 import "../interfaces/IManager.sol";
 import "./FunctionsConsumer.sol";
+import "@openzeppelin/contracts/utils/Base64.sol";
 
 contract SLA {
     struct Consumer {
@@ -12,7 +13,7 @@ contract SLA {
     }
 
     struct Invite {
-        string inviteString;
+        bytes inviteString;
         string ref; // ref to identify the consumers (for providers)
         uint256 validity;
     }
@@ -24,14 +25,15 @@ contract SLA {
     Consumer[] private consumers;
     mapping(address => Consumer) private consumersMap;
     Invite[] private invites;
-    mapping(string => Invite) private invitesMap;
-    mapping(bytes32 => string) private requestIdRefMap;
+    mapping(bytes => Invite) private invitesMap;
+    mapping(bytes32 => string) public requestIdRefMap;
 
     IManager managerContract;
     FunctionsConsumer public functionsConsumerContract;
+    string public latestError;
 
     // events
-    event InviteGenerated(string inviteString);
+    event InviteGenerated(bytes inviteString);
 
     constructor(
         string memory _name,
@@ -81,19 +83,24 @@ contract SLA {
     // chainlink functionsContract can call this function after sending invite to consumer
     function inviteSent(
         bytes32 _requestId,
-        string calldata _inviteString
-    ) public onlyFunctionsContract {
+        bytes calldata err,
+        bytes calldata _inviteCode
+    ) public {
         string memory ref = requestIdRefMap[_requestId];
         require(bytes(ref).length > 0, "Invalid requestId");
         delete requestIdRefMap[_requestId];
+        if (bytes(err).length > 0) {
+            latestError = string(err);
+            return;
+        }
         Invite memory invite = Invite(
-            _inviteString,
+            _inviteCode,
             ref,
             block.timestamp + 1 days
         );
-        invitesMap[_inviteString] = invite;
+        invitesMap[_inviteCode] = invite;
         invites.push(invite);
-        emit InviteGenerated(_inviteString);
+        emit InviteGenerated(_inviteCode);
     }
 
     // provider can call this function to send invite to consumer
@@ -111,24 +118,38 @@ contract SLA {
         requestIdRefMap[requestId] = _ref;
     }
 
+    function getHash(
+        string memory _inviteCode
+    ) internal pure returns (bytes memory) {
+        return
+            bytes(
+                Base64.encode(
+                    abi.encodePacked(ripemd160(abi.encodePacked(_inviteCode)))
+                )
+            );
+    }
+
     // consumer can call this function to accept invite
     function acceptInvitation(
-        string memory _inviteString,
+        string memory _inviteCode,
         string memory _ref
     ) public {
         require(msg.sender != owner, "Provider cannot consume");
+
+        // generate hash of _inviteCode
+        bytes memory inviteHash = getHash(_inviteCode);
         require(
-            invitesMap[_inviteString].validity > block.timestamp,
+            invitesMap[inviteHash].validity > block.timestamp,
             "Invalid invite"
         );
         Consumer memory consumer = Consumer(
             msg.sender,
-            invitesMap[_inviteString].ref,
+            invitesMap[inviteHash].ref,
             block.timestamp + period
         );
         consumersMap[msg.sender] = consumer;
         consumers.push(consumer);
-        delete invitesMap[_inviteString];
+        delete invitesMap[inviteHash];
         managerContract.addConsumer(msg.sender, _ref);
     }
 }
