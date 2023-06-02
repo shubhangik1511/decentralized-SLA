@@ -42,10 +42,10 @@ function generateEncryptedString(data) {
   const algorithm = "aes-256-cbc";
 
   // generate 16 bytes of random data
-  const initVector = crypto.randomBytes(16);
+  const initVector = Buffer.alloc(16, 0);
 
   // secret key generate 32 bytes of random data
-  const Securitykey = crypto.randomBytes(32);
+  const Securitykey = Buffer.alloc(32, 0);
 
   // the cipher function
   const cipher = crypto.createCipheriv(algorithm, Securitykey, initVector);
