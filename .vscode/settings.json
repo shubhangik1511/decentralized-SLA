@@ -39,5 +39,6 @@
   "markdown.extension.toc.updateOnSave": false,
   "[solidity]": {
     "editor.defaultFormatter": "JuanBlanco.solidity"
-  }
+  },
+  "solidity.defaultCompiler": "localNodeModule"
 }

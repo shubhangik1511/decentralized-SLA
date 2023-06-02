@@ -6,48 +6,64 @@ import "./FunctionsConsumer.sol";
 import "@openzeppelin/contracts/utils/Base64.sol";
 
 contract SLA {
-    struct Consumer {
-        address consumerAddress;
+    struct Contract {
+        address consumerAddress; // address of the consumer
         string ref; // ref to identify the consumers (copied from invite)
-        uint256 contractValidity;
+        uint256 providerBalance; // balance of the provider
+        uint256 consumerBalance; // balance of the consumer
+        uint256 violationsCount; // number of violations
+        uint256 createdAt; // timestamp of the contract creation
+        uint256 validity; // timestamp of the contract validity
     }
 
     struct Invite {
-        bytes inviteString;
+        bytes inviteString; // invite string
         string ref; // ref to identify the consumers (for providers)
-        uint256 validity;
+        uint256 validity; // timestamp of the invite validity
     }
 
-    string public name;
-    uint256 public period;
-    address public owner;
-    address public manager;
-    Consumer[] private consumers;
-    mapping(address => Consumer) private consumersMap;
-    Invite[] private invites;
-    mapping(bytes => Invite) private invitesMap;
-    mapping(bytes32 => string) public requestIdRefMap;
+    string public name; // name to identify the SLA contract
+    uint256 public periodInDays; // period of contract in days
+    uint256 public fees; // fees to be paid to the provider
+    uint256 public chargePerViolation; // charge per violation
 
-    IManager managerContract;
-    FunctionsConsumer public functionsConsumerContract;
-    string public latestError;
+    address public owner; // owner of the contract, that is the provider
+    address payable public manager; // Manager contract address
+    uint256 public managerFees; // fees to be paid to the manager
+
+    Contract[] private contracts; // array of all contracts
+    mapping(address => Contract) private consumerContractsMap; // mapping of consumer address to contract
+    Invite[] private invites; // array of all invites
+    mapping(bytes => Invite) private invitesMap; // mapping of invite string to invite
+    mapping(bytes32 => string) public requestIdRefMap; // mapping of chainlink requestId to invite ref
+
+    FunctionsConsumer public functionsConsumerContract; // FunctionsConsumer contract address
+    string public latestError; // latest error message
+    uint64 private subscriptionId; // subscription id
 
     // events
     event InviteGenerated(bytes inviteString);
 
     constructor(
         string memory _name,
-        uint256 _period,
+        uint256 _periodInDays,
+        uint256 _fees,
+        uint256 _chargePerViolation,
+        uint256 _managerFees,
+        uint64 _subscriptionId,
         address _functionsConsumerContractAddress
     ) {
         owner = tx.origin;
-        manager = msg.sender;
-        managerContract = IManager(manager);
+        manager = payable(msg.sender);
+        name = _name;
+        periodInDays = _periodInDays;
+        fees = _fees;
+        chargePerViolation = _chargePerViolation;
+        managerFees = _managerFees;
+        subscriptionId = _subscriptionId;
         functionsConsumerContract = FunctionsConsumer(
             _functionsConsumerContractAddress
         );
-        name = _name;
-        period = _period;
     }
 
     modifier onlyOwner() {
@@ -69,11 +85,11 @@ contract SLA {
     }
 
     function canConsume(address _consumer) public view returns (bool) {
-        return consumersMap[_consumer].contractValidity > block.timestamp;
+        return consumerContractsMap[_consumer].validity > block.timestamp;
     }
 
-    function getConsumers() public view returns (Consumer[] memory) {
-        return consumers;
+    function getConsumers() public view returns (Contract[] memory) {
+        return contracts;
     }
 
     function getInvites() public view returns (Invite[] memory) {
@@ -107,7 +123,6 @@ contract SLA {
     function inviteConsumer(
         string memory _ref,
         string[] calldata args,
-        uint64 subscriptionId,
         uint32 gasLimit
     ) public onlyOwner {
         bytes32 requestId = functionsConsumerContract.executeRequest(
@@ -118,6 +133,7 @@ contract SLA {
         requestIdRefMap[requestId] = _ref;
     }
 
+    // calculate hash of invite code
     function getHash(
         string memory _inviteCode
     ) internal pure returns (bytes memory) {
@@ -129,27 +145,82 @@ contract SLA {
             );
     }
 
+    // report violation
+    function reportViolation(address _contract) public {
+        Contract memory consumer = consumerContractsMap[_contract];
+        require(consumer.validity > block.timestamp, "Invalid consumer");
+        require(consumer.providerBalance > 0, "No balance left");
+        consumerContractsMap[_contract].violationsCount++;
+        if (consumer.providerBalance < chargePerViolation) {
+            consumerContractsMap[_contract].consumerBalance += consumer
+                .providerBalance;
+            consumerContractsMap[_contract].providerBalance = 0;
+            return;
+        }
+        consumerContractsMap[_contract].consumerBalance += chargePerViolation;
+        consumerContractsMap[_contract].providerBalance -= chargePerViolation;
+    }
+
+    // get total fees to be paid by consumer
+    function getTotalFees() public view returns (uint256) {
+        return fees + managerFees;
+    }
+
     // consumer can call this function to accept invite
     function acceptInvitation(
         string memory _inviteCode,
         string memory _ref
-    ) public {
+    ) public payable {
         require(msg.sender != owner, "Provider cannot consume");
-
+        require(msg.value >= getTotalFees(), "Insufficient feesPerDay");
         // generate hash of _inviteCode
         bytes memory inviteHash = getHash(_inviteCode);
         require(
             invitesMap[inviteHash].validity > block.timestamp,
             "Invalid invite"
         );
-        Consumer memory consumer = Consumer(
+        // any extra fees send by consumer as tip to manager
+        uint256 managerNetFees = msg.value - fees;
+        IManager(manager).addConsumer{value: managerNetFees}(msg.sender, _ref);
+        uint256 periodInSeconds = periodInDays * 24 * 60 * 60;
+        Contract memory consumer = Contract(
             msg.sender,
             invitesMap[inviteHash].ref,
-            block.timestamp + period
+            fees,
+            0,
+            0,
+            block.timestamp,
+            block.timestamp + periodInSeconds
         );
-        consumersMap[msg.sender] = consumer;
-        consumers.push(consumer);
+        consumerContractsMap[msg.sender] = consumer;
+        contracts.push(consumer);
         delete invitesMap[inviteHash];
-        managerContract.addConsumer(msg.sender, _ref);
+    }
+
+    // get claimable fees
+    function getClaimableFees(
+        address _contract,
+        address claimee
+    ) public view returns (uint256) {
+        Contract memory consumer = consumerContractsMap[_contract];
+        if (claimee == owner) {
+            return consumer.providerBalance;
+        } else if (claimee == consumer.consumerAddress) {
+            return consumer.consumerBalance;
+        }
+        return 0;
+    }
+
+    // provider or consumer can call this function to claim fees
+    function claimFees(address _contract) public {
+        Contract memory consumer = consumerContractsMap[_contract];
+        require(
+            consumer.validity < block.timestamp,
+            "Contract still in execution"
+        );
+        uint256 claimableFees = getClaimableFees(_contract, msg.sender);
+        require(claimableFees > 0, "No fees to claim");
+        (bool sent, ) = msg.sender.call{value: claimableFees}("");
+        require(sent, "Failed to send fees");
     }
 }
