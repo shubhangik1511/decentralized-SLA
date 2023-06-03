@@ -219,6 +219,10 @@ contract SLA {
         // generate hash of _inviteCode
         bytes memory inviteHash = getHash(_inviteCode);
         require(
+            invitesMap[inviteHash].isActive,
+            "Invite has already been used"
+        );
+        require(
             invitesMap[inviteHash].validity > block.timestamp,
             "Invalid invite"
         );
@@ -238,8 +242,8 @@ contract SLA {
         consumersCount++;
         consumersMap[msg.sender] = consumer;
         consumers.push(consumer);
-        delete invitesMap[inviteHash];
         invites[invitesMap[inviteHash].inviteIndex].isActive = false;
+        delete invitesMap[inviteHash];
     }
 
     // get claimable fees
