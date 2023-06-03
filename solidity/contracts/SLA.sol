@@ -6,7 +6,7 @@ import "./FunctionsConsumer.sol";
 import "@openzeppelin/contracts/utils/Base64.sol";
 
 contract SLA {
-    struct Contract {
+    struct Consumer {
         address consumerAddress; // address of the consumer
         string ref; // ref to identify the consumers (copied from invite)
         uint256 providerBalance; // balance of the provider
@@ -31,8 +31,8 @@ contract SLA {
     address payable public manager; // Manager contract address
     uint256 public managerFees; // fees to be paid to the manager
 
-    Contract[] private contracts; // array of all contracts
-    mapping(address => Contract) private consumerContractsMap; // mapping of consumer address to contract
+    Consumer[] private consumers; // array of all consumers
+    mapping(address => Consumer) private consumersMap; // mapping of consumer address to contract
     Invite[] private invites; // array of all invites
     mapping(bytes => Invite) private invitesMap; // mapping of invite string to invite
     mapping(bytes32 => string) public requestIdRefMap; // mapping of chainlink requestId to invite ref
@@ -85,11 +85,11 @@ contract SLA {
     }
 
     function canConsume(address _consumer) public view returns (bool) {
-        return consumerContractsMap[_consumer].validity > block.timestamp;
+        return consumersMap[_consumer].validity > block.timestamp;
     }
 
-    function getConsumers() public view returns (Contract[] memory) {
-        return contracts;
+    function getConsumers() public view returns (Consumer[] memory) {
+        return consumers;
     }
 
     function getInvites() public view returns (Invite[] memory) {
@@ -147,18 +147,17 @@ contract SLA {
 
     // report violation
     function reportViolation(address _contract) public {
-        Contract memory consumer = consumerContractsMap[_contract];
+        Consumer memory consumer = consumersMap[_contract];
         require(consumer.validity > block.timestamp, "Invalid consumer");
         require(consumer.providerBalance > 0, "No balance left");
-        consumerContractsMap[_contract].violationsCount++;
+        consumersMap[_contract].violationsCount++;
         if (consumer.providerBalance < chargePerViolation) {
-            consumerContractsMap[_contract].consumerBalance += consumer
-                .providerBalance;
-            consumerContractsMap[_contract].providerBalance = 0;
+            consumersMap[_contract].consumerBalance += consumer.providerBalance;
+            consumersMap[_contract].providerBalance = 0;
             return;
         }
-        consumerContractsMap[_contract].consumerBalance += chargePerViolation;
-        consumerContractsMap[_contract].providerBalance -= chargePerViolation;
+        consumersMap[_contract].consumerBalance += chargePerViolation;
+        consumersMap[_contract].providerBalance -= chargePerViolation;
     }
 
     // get total fees to be paid by consumer
@@ -183,7 +182,7 @@ contract SLA {
         uint256 managerNetFees = msg.value - fees;
         IManager(manager).addConsumer{value: managerNetFees}(msg.sender, _ref);
         uint256 periodInSeconds = periodInDays * 24 * 60 * 60;
-        Contract memory consumer = Contract(
+        Consumer memory consumer = Consumer(
             msg.sender,
             invitesMap[inviteHash].ref,
             fees,
@@ -192,8 +191,8 @@ contract SLA {
             block.timestamp,
             block.timestamp + periodInSeconds
         );
-        consumerContractsMap[msg.sender] = consumer;
-        contracts.push(consumer);
+        consumersMap[msg.sender] = consumer;
+        consumers.push(consumer);
         delete invitesMap[inviteHash];
     }
 
@@ -202,7 +201,7 @@ contract SLA {
         address _contract,
         address claimee
     ) public view returns (uint256) {
-        Contract memory consumer = consumerContractsMap[_contract];
+        Consumer memory consumer = consumersMap[_contract];
         if (claimee == owner) {
             return consumer.providerBalance;
         } else if (claimee == consumer.consumerAddress) {
@@ -213,10 +212,10 @@ contract SLA {
 
     // provider or consumer can call this function to claim fees
     function claimFees(address _contract) public {
-        Contract memory consumer = consumerContractsMap[_contract];
+        Consumer memory consumer = consumersMap[_contract];
         require(
             consumer.validity < block.timestamp,
-            "Contract still in execution"
+            "Consumer still in execution"
         );
         uint256 claimableFees = getClaimableFees(_contract, msg.sender);
         require(claimableFees > 0, "No fees to claim");
