@@ -13,12 +13,15 @@ contract SLA {
         uint256 consumerBalance; // balance of the consumer
         uint256 createdAt; // timestamp of the contract creation
         uint256 validity; // timestamp of the contract validity
+        uint256 consumerIndex; // index of the consumer in the consumers array
     }
 
     struct Invite {
         bytes inviteString; // invite string
         string ref; // ref to identify the consumers (for providers)
         uint256 validity; // timestamp of the invite validity
+        bool isActive; // is the invite active
+        uint256 inviteIndex; // index of the invite in the invites array
     }
 
     struct Violation {
@@ -39,6 +42,7 @@ contract SLA {
     uint256 public consumersCount; // number of consumers
     mapping(address => Consumer) private consumersMap; // mapping of consumer address to contract
     Invite[] private invites; // array of all invites
+    uint256 public invitesCount; // number of invites
     mapping(bytes => Invite) private invitesMap; // mapping of invite string to invite
     mapping(bytes32 => string) public requestIdRefMap; // mapping of chainlink requestId to invite ref
 
@@ -121,8 +125,11 @@ contract SLA {
         Invite memory invite = Invite(
             _inviteCode,
             ref,
-            block.timestamp + 1 days
+            block.timestamp + 1 days,
+            true,
+            invitesCount
         );
+        invitesCount++;
         invitesMap[_inviteCode] = invite;
         invites.push(invite);
         emit InviteGenerated(_inviteCode);
@@ -154,6 +161,19 @@ contract SLA {
             );
     }
 
+    // update consumer balance after violation reported
+    function updateBalancesAfterViolation(Consumer memory consumer) internal {
+        address consumerAddress = consumer.consumerAddress;
+        uint256 netCharge = chargePerViolation;
+        if (consumer.providerBalance < chargePerViolation) {
+            netCharge = consumer.providerBalance;
+        }
+        consumersMap[consumerAddress].consumerBalance += netCharge;
+        consumers[consumer.consumerIndex].consumerBalance += netCharge;
+        consumersMap[consumerAddress].providerBalance -= netCharge;
+        consumers[consumer.consumerIndex].providerBalance -= netCharge;
+    }
+
     // report first time response violation
     function reportFirstResponseTimeViolation(address _consumer) public {
         Consumer memory consumer = consumersMap[_consumer];
@@ -164,13 +184,7 @@ contract SLA {
         firstResponseTimeViolationsMap[_consumer].push(
             Violation(block.timestamp, "First response time violation")
         );
-        if (consumer.providerBalance < chargePerViolation) {
-            consumersMap[_consumer].consumerBalance += consumer.providerBalance;
-            consumersMap[_consumer].providerBalance = 0;
-            return;
-        }
-        consumersMap[_consumer].consumerBalance += chargePerViolation;
-        consumersMap[_consumer].providerBalance -= chargePerViolation;
+        updateBalancesAfterViolation(consumer);
     }
 
     // report uptime violation
@@ -185,16 +199,7 @@ contract SLA {
                 uptimeViolationsMap[consumer.consumerAddress].push(
                     Violation(block.timestamp, "Uptime violation")
                 );
-                if (consumer.providerBalance < chargePerViolation) {
-                    consumersMap[consumer.consumerAddress]
-                        .consumerBalance += consumer.providerBalance;
-                    consumersMap[consumer.consumerAddress].providerBalance = 0;
-                    return;
-                }
-                consumersMap[consumer.consumerAddress]
-                    .consumerBalance += chargePerViolation;
-                consumersMap[consumer.consumerAddress]
-                    .providerBalance -= chargePerViolation;
+                updateBalancesAfterViolation(consumer);
             }
         }
     }
@@ -221,18 +226,20 @@ contract SLA {
         uint256 managerNetFees = msg.value - fees;
         IManager(manager).addConsumer{value: managerNetFees}(msg.sender, _ref);
         uint256 periodInSeconds = periodInDays * 24 * 60 * 60;
-        consumersCount++;
         Consumer memory consumer = Consumer(
             msg.sender,
             invitesMap[inviteHash].ref,
             fees,
             0,
             block.timestamp,
-            block.timestamp + periodInSeconds
+            block.timestamp + periodInSeconds,
+            consumersCount
         );
+        consumersCount++;
         consumersMap[msg.sender] = consumer;
         consumers.push(consumer);
         delete invitesMap[inviteHash];
+        invites[invitesMap[inviteHash].inviteIndex].isActive = false;
     }
 
     // get claimable fees
