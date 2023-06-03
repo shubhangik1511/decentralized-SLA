@@ -11,7 +11,6 @@ contract SLA {
         string ref; // ref to identify the consumers (copied from invite)
         uint256 providerBalance; // balance of the provider
         uint256 consumerBalance; // balance of the consumer
-        uint256 violationsCount; // number of violations
         uint256 createdAt; // timestamp of the contract creation
         uint256 validity; // timestamp of the contract validity
     }
@@ -20,6 +19,11 @@ contract SLA {
         bytes inviteString; // invite string
         string ref; // ref to identify the consumers (for providers)
         uint256 validity; // timestamp of the invite validity
+    }
+
+    struct Violation {
+        uint256 timestamp; // timestamp of the violation
+        string message; // message of the violation
     }
 
     string public name; // name to identify the SLA contract
@@ -32,6 +36,7 @@ contract SLA {
     uint256 public managerFees; // fees to be paid to the manager
 
     Consumer[] private consumers; // array of all consumers
+    uint256 public consumersCount; // number of consumers
     mapping(address => Consumer) private consumersMap; // mapping of consumer address to contract
     Invite[] private invites; // array of all invites
     mapping(bytes => Invite) private invitesMap; // mapping of invite string to invite
@@ -40,6 +45,10 @@ contract SLA {
     FunctionsConsumer public functionsConsumerContract; // FunctionsConsumer contract address
     string public latestError; // latest error message
     uint64 private subscriptionId; // subscription id
+    mapping(address => uint256) public uptimeViolationsCountMap; // mapping of consumer address to number of uptime violations
+    mapping(address => Violation[]) public uptimeViolationsMap; // mapping of consumer address to uptime violation
+    mapping(address => uint256) public firstResponseTimeViolationsCountMap; // mapping of consumer address to number of first response time violations
+    mapping(address => Violation[]) public firstResponseTimeViolationsMap; // mapping of consumer address to first response time violation
 
     // events
     event InviteGenerated(bytes inviteString);
@@ -145,19 +154,49 @@ contract SLA {
             );
     }
 
-    // report violation
-    function reportViolation(address _contract) public {
-        Consumer memory consumer = consumersMap[_contract];
+    // report first time response violation
+    function reportFirstResponseTimeViolation(address _consumer) public {
+        Consumer memory consumer = consumersMap[_consumer];
         require(consumer.validity > block.timestamp, "Invalid consumer");
         require(consumer.providerBalance > 0, "No balance left");
-        consumersMap[_contract].violationsCount++;
+        firstResponseTimeViolationsCountMap;
+        firstResponseTimeViolationsCountMap[_consumer]++;
+        firstResponseTimeViolationsMap[_consumer].push(
+            Violation(block.timestamp, "First response time violation")
+        );
         if (consumer.providerBalance < chargePerViolation) {
-            consumersMap[_contract].consumerBalance += consumer.providerBalance;
-            consumersMap[_contract].providerBalance = 0;
+            consumersMap[_consumer].consumerBalance += consumer.providerBalance;
+            consumersMap[_consumer].providerBalance = 0;
             return;
         }
-        consumersMap[_contract].consumerBalance += chargePerViolation;
-        consumersMap[_contract].providerBalance -= chargePerViolation;
+        consumersMap[_consumer].consumerBalance += chargePerViolation;
+        consumersMap[_consumer].providerBalance -= chargePerViolation;
+    }
+
+    // report uptime violation
+    function reportUptimeViolation() public {
+        for (uint256 i = 0; i < consumersCount; i++) {
+            Consumer memory consumer = consumers[i];
+            if (
+                consumer.validity > block.timestamp &&
+                consumer.providerBalance > 0
+            ) {
+                uptimeViolationsCountMap[consumer.consumerAddress]++;
+                uptimeViolationsMap[consumer.consumerAddress].push(
+                    Violation(block.timestamp, "Uptime violation")
+                );
+                if (consumer.providerBalance < chargePerViolation) {
+                    consumersMap[consumer.consumerAddress]
+                        .consumerBalance += consumer.providerBalance;
+                    consumersMap[consumer.consumerAddress].providerBalance = 0;
+                    return;
+                }
+                consumersMap[consumer.consumerAddress]
+                    .consumerBalance += chargePerViolation;
+                consumersMap[consumer.consumerAddress]
+                    .providerBalance -= chargePerViolation;
+            }
+        }
     }
 
     // get total fees to be paid by consumer
@@ -182,11 +221,11 @@ contract SLA {
         uint256 managerNetFees = msg.value - fees;
         IManager(manager).addConsumer{value: managerNetFees}(msg.sender, _ref);
         uint256 periodInSeconds = periodInDays * 24 * 60 * 60;
+        consumersCount++;
         Consumer memory consumer = Consumer(
             msg.sender,
             invitesMap[inviteHash].ref,
             fees,
-            0,
             0,
             block.timestamp,
             block.timestamp + periodInSeconds
