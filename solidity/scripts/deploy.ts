@@ -7,13 +7,20 @@ const network = networks[networkName];
 async function main() {
   const ManagerContract = await ethers.getContractFactory("Manager");
   const manager = await ManagerContract.deploy(
-    "0x9e13EAad45BeFb0E718a3d50F460706d4E703BF8"
+    0.001 * 10 ** 18,
+    "0x00F03f79C6A13AE6A8168d36da73ecC19DfbB915",
+    1114
   );
   await manager.deployed();
   console.log(`Manager deployed to ${manager.address}`);
 
   const slaContractTransaction = await (
-    await manager.createSLAContract("Test", 3 * 60)
+    await manager.createSLAContract(
+      "Sample Contract 1",
+      30,
+      0.001 * 10 ** 18,
+      0.0001 * 10 ** 18
+    )
   ).wait();
   const slaContractAddress = slaContractTransaction.events?.find(
     (event) => event.event === "SLAContractCreated"
@@ -33,7 +40,6 @@ async function main() {
         `http://localhost:3000/accept-invite?sla=${sla.address}`,
         new Date().getTime().toString(),
       ],
-      1114,
       300_000,
       {
         gasLimit: 1_500_000,
