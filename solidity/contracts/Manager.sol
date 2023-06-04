@@ -4,6 +4,7 @@ pragma solidity ^0.8.9;
 import "./SLA.sol";
 import "./FunctionsConsumer.sol";
 import "../interfaces/IManager.sol";
+import "./FunctionsUptimeChecker.sol";
 
 contract Manager is IManager {
     SLAContract[] public allSLAs; // array of all SLA contracts
@@ -11,6 +12,7 @@ contract Manager is IManager {
     mapping(address => SLAContract[]) private providerSLAs; // mapping of provider address to SLA contracts
     mapping(address => SLAContract[]) private consumerSLAs; // mapping of consumer address to SLA contracts
     FunctionsConsumer public functionsConsumerContract; // FunctionsConsumer contract address
+    FunctionsUptimeChecker public functionsUptimeCheckerContract;
     uint256 public managerFees; // fees to be paid to the manager
     uint256 public managerBalance; // balance of the manager
     mapping(address => bool) public authorizedWithdrawers; // mapping of authorized withdrawers
@@ -22,11 +24,15 @@ contract Manager is IManager {
     constructor(
         uint256 _managerFees,
         address _functionsConsumerContractAddress,
+        address _functionsUptimeCheckerContactAddress,
         uint64 _subscriptionId
     ) {
         managerFees = _managerFees;
         functionsConsumerContract = FunctionsConsumer(
             _functionsConsumerContractAddress
+        );
+        functionsUptimeCheckerContract = FunctionsUptimeChecker(
+            _functionsUptimeCheckerContactAddress
         );
         authorizedWithdrawers[msg.sender] = true;
         subscriptionId = _subscriptionId;
@@ -62,7 +68,8 @@ contract Manager is IManager {
                 _chargePerViolation,
                 managerFees,
                 subscriptionId,
-                address(functionsConsumerContract)
+                address(functionsConsumerContract),
+                address(functionsUptimeCheckerContract)
             )
         );
         SLAContract memory sla = SLAContract(
@@ -74,6 +81,7 @@ contract Manager is IManager {
         allSLAsMap[slaAddress] = true;
         providerSLAs[msg.sender].push(sla);
         functionsConsumerContract.addAuthorizedRequester(slaAddress);
+        functionsUptimeCheckerContract.addAuthorizedRequester(slaAddress);
         emit SLAContractCreated(slaAddress);
     }
 
@@ -136,5 +144,13 @@ contract Manager is IManager {
         managerBalance -= _amount;
         (bool sent, ) = msg.sender.call{value: _amount}("");
         require(sent, "Failed to withdraw");
+    }
+
+    function triggerCheckAllSLAs() public {
+        for (uint256 i = 0; i < allSLAs.length; i++) {
+            SLAContract memory slaContract = allSLAs[i];
+            SLA sla = SLA(slaContract.slaAddress);
+            sla.triggerCheckSLACompliance(300000);
+        }
     }
 }

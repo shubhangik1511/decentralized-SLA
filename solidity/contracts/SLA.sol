@@ -3,6 +3,7 @@ pragma solidity ^0.8.9;
 
 import "../interfaces/IManager.sol";
 import "./FunctionsConsumer.sol";
+import "./FunctionsUptimeChecker.sol";
 import "@openzeppelin/contracts/utils/Base64.sol";
 
 contract SLA {
@@ -47,12 +48,15 @@ contract SLA {
     mapping(bytes32 => string) public requestIdRefMap; // mapping of chainlink requestId to invite ref
 
     FunctionsConsumer public functionsConsumerContract; // FunctionsConsumer contract address
+    FunctionsUptimeChecker public functionsUptimeChecker; // FunctionsUptimeCheker contract
+
     string public latestError; // latest error message
     uint64 private subscriptionId; // subscription id
     mapping(address => uint256) public uptimeViolationsCountMap; // mapping of consumer address to number of uptime violations
     mapping(address => Violation[]) public uptimeViolationsMap; // mapping of consumer address to uptime violation
     mapping(address => uint256) public firstResponseTimeViolationsCountMap; // mapping of consumer address to number of first response time violations
     mapping(address => Violation[]) public firstResponseTimeViolationsMap; // mapping of consumer address to first response time violation
+    string[] public uptimeCheckerArgs;
 
     // events
     event InviteGenerated(bytes inviteString);
@@ -64,7 +68,8 @@ contract SLA {
         uint256 _chargePerViolation,
         uint256 _managerFees,
         uint64 _subscriptionId,
-        address _functionsConsumerContractAddress
+        address _functionsConsumerContractAddress,
+        address _functionsUptimeCheckerContractAddress
     ) {
         owner = tx.origin;
         manager = payable(msg.sender);
@@ -76,6 +81,9 @@ contract SLA {
         subscriptionId = _subscriptionId;
         functionsConsumerContract = FunctionsConsumer(
             _functionsConsumerContractAddress
+        );
+        functionsUptimeChecker = FunctionsUptimeChecker(
+            _functionsUptimeCheckerContractAddress
         );
     }
 
@@ -271,5 +279,27 @@ contract SLA {
         require(claimableFees > 0, "No fees to claim");
         (bool sent, ) = msg.sender.call{value: claimableFees}("");
         require(sent, "Failed to send fees");
+    }
+
+    function triggerCheckSLACompliance(uint32 gasLimit) public {
+        functionsUptimeChecker.executeRequest(
+            uptimeCheckerArgs,
+            subscriptionId,
+            gasLimit
+        );
+    }
+
+    function completeCheckSLACompliance(
+        bytes32 _requestId,
+        bytes calldata response,
+        bytes calldata err
+    ) public {
+        if (keccak256(response) != keccak256(bytes("1"))) {
+            reportUptimeViolation();
+        }
+    }
+
+    function updateUptimeCheckerArgs(string[] memory _args) public onlyOwner {
+        uptimeCheckerArgs = _args;
     }
 }

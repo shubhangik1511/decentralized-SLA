@@ -9,6 +9,7 @@ async function main() {
   const manager = await ManagerContract.deploy(
     0.001 * 10 ** 18,
     "0x00F03f79C6A13AE6A8168d36da73ecC19DfbB915",
+    "0x3AA6d8d2151aC8dD8A40e605D051c2E01Aadd4d9",
     1114
   );
   await manager.deployed();
@@ -47,6 +48,12 @@ async function main() {
       }
     )
   ).wait(2);
+  await sla.updateUptimeCheckerArgs([
+    "https://www.githubstatus.com/api/v2/status.json",
+    "GET",
+    "status.description",
+    "All Systems Operational",
+  ]);
   console.log("result status", result.status);
 }
 

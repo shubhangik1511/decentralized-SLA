@@ -8,10 +8,13 @@ const networkName = hre.network.name as keyof typeof networks;
 async function main() {
   const network = networks[networkName];
   const FunctionsConsumer = await ethers.getContractFactory(
-    "FunctionsConsumer"
+    "FunctionsUptimeChecker"
   );
   const functionsConsumer = await FunctionsConsumer.attach(
-    "0x5c4B624675914A46a46d2098073266D6c4738927"
+    "0x3AA6d8d2151aC8dD8A40e605D051c2E01Aadd4d9"
+  );
+  await functionsConsumer.addAuthorizedRequester(
+    "0x85BDA8328D24943E80Fe32C1Ee9cA55656a327Ed"
   );
   console.log("latestRequestId", await functionsConsumer.latestRequestId());
   console.log("latestResponse", await functionsConsumer.latestResponse());
