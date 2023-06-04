@@ -20,7 +20,7 @@ import slaAbi from 'src/@core/abi/SlaAbi.json'
 const InviteForm = () => {
   const [sla, setSla] = useState<string>('')
   const [ref, setRef] = useState<string>('')
-  const [link, setLink] = useState<string>('')
+  const [code, setCode] = useState<string>('')
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [showError, setShowError] = useState<boolean>(false)
   const router = useRouter()
@@ -33,9 +33,11 @@ const InviteForm = () => {
     address: sla as `0x${string}`,
     abi: slaAbi,
     functionName: 'acceptInvitation',
-    args: [link, ref],
+    value: BigInt(0.2 * 10 ** 18),
+    args: [code, ref],
     gas: BigInt(1_500_000)
   })
+
   const { data, write } = useContractWrite(config)
 
   const {
@@ -49,8 +51,8 @@ const InviteForm = () => {
 
   useEffect(() => {
     if (Object.keys(router.query).length > 1) {
-      const link = router.query['link']
-      if (link) setLink((link as string).trim())
+      const code = router.query['code']
+      if (code) setCode((code as string).trim())
       const sla = router.query['sla']
       if (sla) setSla((sla as string).trim())
     } else {

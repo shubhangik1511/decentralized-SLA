@@ -8,8 +8,28 @@
             },
             {
                 "internalType": "uint256",
-                "name": "_period",
+                "name": "_periodInDays",
                 "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "_fees",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "_chargePerViolation",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "_managerFees",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint64",
+                "name": "_subscriptionId",
+                "type": "uint64"
             },
             {
                 "internalType": "address",
@@ -25,9 +45,9 @@
         "inputs": [
             {
                 "indexed": false,
-                "internalType": "string",
+                "internalType": "bytes",
                 "name": "inviteString",
-                "type": "string"
+                "type": "bytes"
             }
         ],
         "name": "InviteGenerated",
@@ -37,7 +57,7 @@
         "inputs": [
             {
                 "internalType": "string",
-                "name": "_inviteString",
+                "name": "_inviteCode",
                 "type": "string"
             },
             {
@@ -48,7 +68,7 @@
         ],
         "name": "acceptInvitation",
         "outputs": [],
-        "stateMutability": "nonpayable",
+        "stateMutability": "payable",
         "type": "function"
     },
     {
@@ -72,12 +92,136 @@
     },
     {
         "inputs": [],
+        "name": "chargePerViolation",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "_contract",
+                "type": "address"
+            }
+        ],
+        "name": "claimFees",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "consumersCount",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "fees",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+            }
+        ],
+        "name": "firstResponseTimeViolationsCountMap",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+            },
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "name": "firstResponseTimeViolationsMap",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "timestamp",
+                "type": "uint256"
+            },
+            {
+                "internalType": "string",
+                "name": "message",
+                "type": "string"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
         "name": "functionsConsumerContract",
         "outputs": [
             {
                 "internalType": "contract FunctionsConsumer",
                 "name": "",
                 "type": "address"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "_contract",
+                "type": "address"
+            },
+            {
+                "internalType": "address",
+                "name": "claimee",
+                "type": "address"
+            }
+        ],
+        "name": "getClaimableFees",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
             }
         ],
         "stateMutability": "view",
@@ -101,7 +245,27 @@
                     },
                     {
                         "internalType": "uint256",
-                        "name": "contractValidity",
+                        "name": "providerBalance",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "consumerBalance",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "createdAt",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "validity",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "consumerIndex",
                         "type": "uint256"
                     }
                 ],
@@ -120,9 +284,9 @@
             {
                 "components": [
                     {
-                        "internalType": "string",
+                        "internalType": "bytes",
                         "name": "inviteString",
-                        "type": "string"
+                        "type": "bytes"
                     },
                     {
                         "internalType": "string",
@@ -133,11 +297,34 @@
                         "internalType": "uint256",
                         "name": "validity",
                         "type": "uint256"
+                    },
+                    {
+                        "internalType": "bool",
+                        "name": "isActive",
+                        "type": "bool"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "inviteIndex",
+                        "type": "uint256"
                     }
                 ],
                 "internalType": "struct SLA.Invite[]",
                 "name": "",
                 "type": "tuple[]"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "getTotalFees",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
             }
         ],
         "stateMutability": "view",
@@ -154,11 +341,6 @@
                 "internalType": "string[]",
                 "name": "args",
                 "type": "string[]"
-            },
-            {
-                "internalType": "uint64",
-                "name": "subscriptionId",
-                "type": "uint64"
             },
             {
                 "internalType": "uint32",
@@ -179,9 +361,14 @@
                 "type": "bytes32"
             },
             {
-                "internalType": "string",
-                "name": "_inviteString",
-                "type": "string"
+                "internalType": "bytes",
+                "name": "err",
+                "type": "bytes"
+            },
+            {
+                "internalType": "bytes",
+                "name": "_inviteCode",
+                "type": "bytes"
             }
         ],
         "name": "inviteSent",
@@ -191,12 +378,51 @@
     },
     {
         "inputs": [],
+        "name": "invitesCount",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "latestError",
+        "outputs": [
+            {
+                "internalType": "string",
+                "name": "",
+                "type": "string"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
         "name": "manager",
         "outputs": [
             {
-                "internalType": "address",
+                "internalType": "address payable",
                 "name": "",
                 "type": "address"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "managerFees",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
             }
         ],
         "stateMutability": "view",
@@ -230,12 +456,99 @@
     },
     {
         "inputs": [],
-        "name": "period",
+        "name": "periodInDays",
         "outputs": [
             {
                 "internalType": "uint256",
                 "name": "",
                 "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "_consumer",
+                "type": "address"
+            }
+        ],
+        "name": "reportFirstResponseTimeViolation",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "reportUptimeViolation",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "bytes32",
+                "name": "",
+                "type": "bytes32"
+            }
+        ],
+        "name": "requestIdRefMap",
+        "outputs": [
+            {
+                "internalType": "string",
+                "name": "",
+                "type": "string"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+            }
+        ],
+        "name": "uptimeViolationsCountMap",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+            },
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "name": "uptimeViolationsMap",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "timestamp",
+                "type": "uint256"
+            },
+            {
+                "internalType": "string",
+                "name": "message",
+                "type": "string"
             }
         ],
         "stateMutability": "view",

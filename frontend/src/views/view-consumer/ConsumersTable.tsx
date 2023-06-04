@@ -18,7 +18,7 @@ import slaAbi from 'src/@core/abi/SlaAbi.json'
 interface Consumer {
   consumerAddress: string
   ref: string
-  contractValidity: number
+  validity: number
 }
 
 const ConsumersTable = () => {
@@ -71,7 +71,7 @@ const ConsumersTable = () => {
                   <TableCell component='th' scope='row'>
                     {row.ref}
                   </TableCell>
-                  <TableCell align='center'>{new Date(Number(row.contractValidity) * 1000).toDateString()}</TableCell>
+                  <TableCell align='center'>{new Date(Number(row.validity) * 1000).toDateString()}</TableCell>
                 </TableRow>
               ))
             ))}

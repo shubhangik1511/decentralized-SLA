@@ -19,6 +19,7 @@ interface Invite {
   inviteString: string
   ref: string
   validity: number
+  isActive: boolean
 }
 
 const InvitesTable = () => {
@@ -39,8 +40,6 @@ const InvitesTable = () => {
     }
   }, [router])
 
-  console.log(data)
-
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} aria-label='simple table'>
@@ -49,6 +48,7 @@ const InvitesTable = () => {
             <TableCell align='left'>Invite String</TableCell>
             <TableCell align='left'>Ref</TableCell>
             <TableCell align='center'>Validity</TableCell>
+            <TableCell align='center'>Status</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -74,6 +74,7 @@ const InvitesTable = () => {
                     {row.ref}
                   </TableCell>
                   <TableCell align='center'>{new Date(Number(row.validity) * 1000).toDateString()}</TableCell>
+                  <TableCell align='center'>{row.isActive ? 'Not Accepted' : 'Accepted'}</TableCell>
                 </TableRow>
               ))
             ))}

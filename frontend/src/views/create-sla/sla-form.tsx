@@ -19,17 +19,18 @@ import { usePrepareContractWrite, useContractWrite, useWaitForTransaction } from
 import managerAbi from 'src/@core/abi/ManagerAbi.json'
 
 const periods = [
-  { id: '5min', name: '5 mins', value: 5 * 60 },
-  { id: '1day', name: '1 Day', value: 24 * 60 * 60 },
-  { id: '1month', name: '1 Month', value: 30 * 24 * 60 * 60 },
-  { id: '3months', name: '3 Months', value: 3 * 30 * 24 * 60 * 60 },
-  { id: '6months', name: '6 Months', value: 6 * 30 * 24 * 60 * 60 },
-  { id: '1year', name: '1 Year', value: 12 * 30 * 24 * 60 * 60 }
+  { id: '1day', name: '1 Day', value: 1 },
+  { id: '1month', name: '1 Month', value: 30 },
+  { id: '3months', name: '3 Months', value: 3 * 30 },
+  { id: '6months', name: '6 Months', value: 6 * 30 },
+  { id: '1year', name: '1 Year', value: 12 * 30 }
 ]
 
 const SLAForm = () => {
   const [name, setName] = useState<string>('Sample Contract')
-  const [period, setPeriod] = useState<number>(30 * 24 * 60 * 60)
+  const [period, setPeriod] = useState<number>(30)
+  const [fee, setFee] = useState<bigint>(BigInt(0))
+  const [chargePerViolation, setChargePerViolation] = useState<bigint>(BigInt(0))
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [showError, setShowError] = useState<boolean>(false)
 
@@ -41,7 +42,7 @@ const SLAForm = () => {
     address: process.env.NEXT_PUBLIC_MANAGER_CONTRACT_ADDRESS as `0x${string}`,
     abi: managerAbi,
     functionName: 'createSLAContract',
-    args: [name, period]
+    args: [name, period, fee, chargePerViolation]
   })
   const { data, write } = useContractWrite(config)
 
@@ -76,6 +77,8 @@ const SLAForm = () => {
     write!()
   }
 
+  const convertToBigNumber = (value: string) => BigInt(Number(value) * 10 ** 18)
+
   return (
     <>
       {showError ? (
@@ -107,7 +110,7 @@ const SLAForm = () => {
           <Grid item xs={12} sm={6}>
             <FormControl fullWidth>
               <InputLabel>Period</InputLabel>
-              <Select label='Period' defaultValue={30 * 24 * 60 * 60} onChange={e => setPeriod(Number(e.target.value))}>
+              <Select label='Period' defaultValue={30} onChange={e => setPeriod(Number(e.target.value))}>
                 {periods.map(period => (
                   <MenuItem key={period.id} value={period.value}>
                     {period.name}
@@ -115,6 +118,26 @@ const SLAForm = () => {
                 ))}
               </Select>
             </FormControl>
+          </Grid>
+
+          <Grid item xs={12} sm={6}>
+            <TextField
+              fullWidth
+              label='Fee'
+              onChange={e => setFee(convertToBigNumber(e.target.value))}
+              placeholder='Fee for the contract'
+              defaultValue='0'
+            />
+          </Grid>
+
+          <Grid item xs={12} sm={6}>
+            <TextField
+              fullWidth
+              label='Charge Per Violation'
+              onChange={e => setChargePerViolation(convertToBigNumber(e.target.value))}
+              placeholder='Amount to charge per violation'
+              defaultValue='0'
+            />
           </Grid>
 
           <Grid item xs={12}>
