@@ -12,8 +12,10 @@ import InputLabel from '@mui/material/InputLabel'
 import AlertTitle from '@mui/material/AlertTitle'
 import IconButton from '@mui/material/IconButton'
 import CircularProgress from '@mui/material/CircularProgress'
-
 import Close from 'mdi-material-ui/Close'
+
+// ** Next Import
+import { useRouter } from 'next/router'
 
 import { usePrepareContractWrite, useContractWrite, useWaitForTransaction } from 'wagmi'
 import managerAbi from 'src/@core/abi/ManagerAbi.json'
@@ -33,6 +35,7 @@ const SLAForm = () => {
   const [chargePerViolation, setChargePerViolation] = useState<bigint>(BigInt(0))
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [showError, setShowError] = useState<boolean>(false)
+  const router = useRouter()
 
   const {
     config,
@@ -69,8 +72,9 @@ const SLAForm = () => {
     }
     if (isTxSuccess) {
       setIsLoading(false)
+      router.push('/view-sla')
     }
-  }, [isTxSuccess, isTxLoading])
+  }, [isTxSuccess, isTxLoading, router])
 
   const submitHandler = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
