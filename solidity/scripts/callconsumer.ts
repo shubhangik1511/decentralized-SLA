@@ -11,7 +11,7 @@ async function main() {
     "FunctionsUptimeChecker"
   );
   const functionsConsumer = await FunctionsConsumer.attach(
-    "0x3AA6d8d2151aC8dD8A40e605D051c2E01Aadd4d9"
+    "0x00F03f79C6A13AE6A8168d36da73ecC19DfbB915"
   );
   await functionsConsumer.addAuthorizedRequester(
     "0x85BDA8328D24943E80Fe32C1Ee9cA55656a327Ed"

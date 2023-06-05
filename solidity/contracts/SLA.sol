@@ -312,6 +312,16 @@ contract SLA {
         }
     }
 
+    function completeCheckZendeskSLACompliance(
+        bytes32 _requestId,
+        bytes calldata response,
+        bytes calldata err
+    ) public {
+        if (keccak256(response) != keccak256(bytes("NA"))) {
+            reportFirstResponseTimeViolation(msg.sender);
+        }
+    }
+
     function updateUptimeCheckerArgs(string[] memory _args) public onlyOwner {
         uptimeCheckerArgs = _args;
     }

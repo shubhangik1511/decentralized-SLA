@@ -10,7 +10,7 @@ async function main() {
     0.001 * 10 ** 18,
     "0x00F03f79C6A13AE6A8168d36da73ecC19DfbB915",
     "0x3AA6d8d2151aC8dD8A40e605D051c2E01Aadd4d9",
-    1114
+    1527
   );
   await manager.deployed();
   console.log(`Manager deployed to ${manager.address}`);
