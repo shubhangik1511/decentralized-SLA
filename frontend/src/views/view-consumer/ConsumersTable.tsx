@@ -44,8 +44,8 @@ const ConsumersTable = () => {
       <Table sx={{ minWidth: 650 }} aria-label='simple table'>
         <TableHead>
           <TableRow>
-            <TableCell align='left'>Consumer Address</TableCell>
             <TableCell align='left'>Ref</TableCell>
+            <TableCell align='center'>Consumer Address</TableCell>
             <TableCell align='center'>Validity</TableCell>
           </TableRow>
         </TableHead>
@@ -56,24 +56,26 @@ const ConsumersTable = () => {
                 No data found.
               </TableCell>
             ) : (
-              (data as Consumer[]).map(row => (
-                <TableRow
-                  key={row.consumerAddress}
-                  sx={{
-                    '&:last-of-type td, &:last-of-type th': {
-                      border: 0
-                    }
-                  }}
-                >
-                  <TableCell component='th' scope='row'>
-                    {row.consumerAddress}
-                  </TableCell>
-                  <TableCell component='th' scope='row'>
-                    {row.ref}
-                  </TableCell>
-                  <TableCell align='center'>{new Date(Number(row.validity) * 1000).toDateString()}</TableCell>
-                </TableRow>
-              ))
+              (data as Consumer[])
+                .sort((a, b) => Number(b.validity) - Number(a.validity))
+                .map(row => (
+                  <TableRow
+                    key={row.consumerAddress}
+                    sx={{
+                      '&:last-of-type td, &:last-of-type th': {
+                        border: 0
+                      }
+                    }}
+                  >
+                    <TableCell component='th' scope='row'>
+                      {row.ref}
+                    </TableCell>
+                    <TableCell align='center' component='th' scope='row'>
+                      {row.consumerAddress}
+                    </TableCell>
+                    <TableCell align='center'>{new Date(Number(row.validity) * 1000).toUTCString()}</TableCell>
+                  </TableRow>
+                ))
             ))}
         </TableBody>
       </Table>

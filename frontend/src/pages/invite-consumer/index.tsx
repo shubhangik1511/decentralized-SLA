@@ -5,6 +5,8 @@ import CardHeader from '@mui/material/CardHeader'
 import Divider from '@mui/material/Divider'
 import CardContent from '@mui/material/CardContent'
 
+import ArrowLeft from 'mdi-material-ui/ArrowLeft'
+
 // ** Demo Components Imports
 import InviteForm from 'src/views/invite-consumer/invite-form'
 
@@ -17,7 +19,18 @@ const InviteConsumer = () => {
       <Grid item xs={12} sx={{ marginTop: 4.8, marginBottom: 3 }}>
         <Card>
           {' '}
-          <CardHeader title='Invite Consumer' titleTypographyProps={{ variant: 'h6' }} />
+          <CardHeader
+            title='Invite Consumer'
+            titleTypographyProps={{ variant: 'h6' }}
+            avatar={
+              <ArrowLeft
+                style={{ cursor: 'pointer' }}
+                onClick={() => {
+                  window.history.back()
+                }}
+              />
+            }
+          />
           <Divider sx={{ marginTop: 0, marginBottom: 5 }} />
           <CardContent>
             <InviteForm />

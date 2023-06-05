@@ -3,10 +3,9 @@ import Grid from '@mui/material/Grid'
 import Link from '@mui/material/Link'
 import Card from '@mui/material/Card'
 import Typography from '@mui/material/Typography'
-import CardHeader from '@mui/material/CardHeader'
 
 // ** Demo Components Imports
-import ContractsTable from 'src/views/contracts/ContractsTable'
+import ContractsTable from 'src/views/view-contracts/ContractsTable'
 
 const Contracts = () => {
   return (
@@ -21,7 +20,6 @@ const Contracts = () => {
       </Grid>
       <Grid item xs={12}>
         <Card>
-          <CardHeader title='Basic Table' titleTypographyProps={{ variant: 'h6' }} />
           <ContractsTable />
         </Card>
       </Grid>

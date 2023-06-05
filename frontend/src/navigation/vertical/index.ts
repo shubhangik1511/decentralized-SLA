@@ -32,7 +32,7 @@ const navigation = (): VerticalNavItemsType => {
     {
       title: 'Contracts',
       icon: FileSign,
-      path: '/contracts'
+      path: '/view-contracts'
     },
     {
       sectionTitle: 'User Interface'

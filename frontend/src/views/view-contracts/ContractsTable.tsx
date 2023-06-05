@@ -33,7 +33,7 @@ const ContractsTable = () => {
           <TableRow>
             <TableCell>Name</TableCell>
             <TableCell align='center'>Address</TableCell>
-            <TableCell align='right'>Created At</TableCell>
+            <TableCell align='center'>Created At</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -43,33 +43,35 @@ const ContractsTable = () => {
                 No data found.
               </TableCell>
             ) : (
-              (data as Contract[]).map(row => (
-                <TableRow
-                  key={row.name}
-                  sx={{
-                    '&:last-of-type td, &:last-of-type th': {
-                      border: 0
-                    }
-                  }}
-                >
-                  <TableCell component='th' scope='row'>
-                    {row.name}
-                  </TableCell>
-                  <TableCell align='center'>
-                    <>
-                      {row.slaAddress}
-                      <OpenInNew
-                        sx={{ marginLeft: 1, fontSize: 16 }}
-                        cursor='pointer'
-                        onClick={() =>
-                          window.open(`${process.env.NEXT_PUBLIC_EXPLORER_URL}/address/${row.slaAddress}`, '_blank')
-                        }
-                      />
-                    </>
-                  </TableCell>
-                  <TableCell align='left'>{new Date(Number(row.createdAt) * 1000).toDateString()}</TableCell>
-                </TableRow>
-              ))
+              (data as Contract[])
+                .sort((a, b) => Number(b.createdAt) - Number(a.createdAt))
+                .map(row => (
+                  <TableRow
+                    key={row.name}
+                    sx={{
+                      '&:last-of-type td, &:last-of-type th': {
+                        border: 0
+                      }
+                    }}
+                  >
+                    <TableCell component='th' scope='row'>
+                      {row.name}
+                    </TableCell>
+                    <TableCell align='center'>
+                      <>
+                        {row.slaAddress}
+                        <OpenInNew
+                          sx={{ marginLeft: 1, fontSize: 16 }}
+                          cursor='pointer'
+                          onClick={() =>
+                            window.open(`${process.env.NEXT_PUBLIC_EXPLORER_URL}/address/${row.slaAddress}`, '_blank')
+                          }
+                        />
+                      </>
+                    </TableCell>
+                    <TableCell align='center'>{new Date(Number(row.createdAt) * 1000).toUTCString()}</TableCell>
+                  </TableRow>
+                ))
             ))}
         </TableBody>
       </Table>

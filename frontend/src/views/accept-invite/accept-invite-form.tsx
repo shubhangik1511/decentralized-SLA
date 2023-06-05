@@ -14,7 +14,7 @@ import { useRouter } from 'next/router'
 
 import Close from 'mdi-material-ui/Close'
 
-import { usePrepareContractWrite, useContractWrite, useWaitForTransaction } from 'wagmi'
+import { usePrepareContractWrite, useContractWrite, useWaitForTransaction, useContractRead } from 'wagmi'
 import slaAbi from 'src/@core/abi/SlaAbi.json'
 
 const InviteForm = () => {
@@ -25,6 +25,21 @@ const InviteForm = () => {
   const [showError, setShowError] = useState<boolean>(false)
   const router = useRouter()
 
+  useEffect(() => {
+    if (Object.keys(router.query).length > 1) {
+      const code = router.query['code']
+      if (code) setCode((code as string).trim())
+      const sla = router.query['sla']
+      if (sla) setSla((sla as string).trim())
+    }
+  }, [router])
+
+  const { data: fees } = useContractRead({
+    address: sla as `0x${string}`,
+    abi: slaAbi,
+    functionName: 'getTotalFees'
+  })
+
   const {
     config,
     error: prepareError,
@@ -33,7 +48,7 @@ const InviteForm = () => {
     address: sla as `0x${string}`,
     abi: slaAbi,
     functionName: 'acceptInvitation',
-    value: BigInt(0.2 * 10 ** 18),
+    value: fees,
     args: [code, ref],
     gas: BigInt(1_500_000)
   })
@@ -50,17 +65,6 @@ const InviteForm = () => {
   })
 
   useEffect(() => {
-    if (Object.keys(router.query).length > 1) {
-      const code = router.query['code']
-      if (code) setCode((code as string).trim())
-      const sla = router.query['sla']
-      if (sla) setSla((sla as string).trim())
-    } else {
-      router.push('/')
-    }
-  }, [router])
-
-  useEffect(() => {
     if (isPrepareError || isError) {
       setShowError(true)
     } else {
@@ -74,8 +78,9 @@ const InviteForm = () => {
     }
     if (isTxSuccess) {
       setIsLoading(false)
+      router.push('/view-contracts')
     }
-  }, [isTxSuccess, isTxLoading])
+  }, [isTxSuccess, isTxLoading, router])
 
   const submitHandler = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()

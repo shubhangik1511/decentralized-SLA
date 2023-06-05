@@ -74,8 +74,9 @@ const InviteForm = () => {
     }
     if (isTxSuccess) {
       setIsLoading(false)
+      router.push(`/view-sla`)
     }
-  }, [isTxSuccess, isTxLoading])
+  }, [isTxSuccess, isTxLoading, router])
 
   const submitHandler = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()

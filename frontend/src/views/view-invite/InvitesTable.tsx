@@ -45,7 +45,6 @@ const InvitesTable = () => {
       <Table sx={{ minWidth: 650 }} aria-label='simple table'>
         <TableHead>
           <TableRow>
-            <TableCell align='left'>Invite String</TableCell>
             <TableCell align='left'>Ref</TableCell>
             <TableCell align='center'>Validity</TableCell>
             <TableCell align='center'>Status</TableCell>
@@ -58,25 +57,24 @@ const InvitesTable = () => {
                 No data found.
               </TableCell>
             ) : (
-              (data as Invite[]).map(row => (
-                <TableRow
-                  key={row.inviteString}
-                  sx={{
-                    '&:last-of-type td, &:last-of-type th': {
-                      border: 0
-                    }
-                  }}
-                >
-                  <TableCell component='th' scope='row'>
-                    {row.inviteString}
-                  </TableCell>
-                  <TableCell component='th' scope='row'>
-                    {row.ref}
-                  </TableCell>
-                  <TableCell align='center'>{new Date(Number(row.validity) * 1000).toDateString()}</TableCell>
-                  <TableCell align='center'>{row.isActive ? 'Not Accepted' : 'Accepted'}</TableCell>
-                </TableRow>
-              ))
+              (data as Invite[])
+                .sort((a, b) => Number(b.validity) - Number(a.validity))
+                .map(row => (
+                  <TableRow
+                    key={row.inviteString}
+                    sx={{
+                      '&:last-of-type td, &:last-of-type th': {
+                        border: 0
+                      }
+                    }}
+                  >
+                    <TableCell component='th' scope='row'>
+                      {row.ref}
+                    </TableCell>
+                    <TableCell align='center'>{new Date(Number(row.validity) * 1000).toUTCString()}</TableCell>
+                    <TableCell align='center'>{row.isActive ? 'Not Accepted' : 'Accepted'}</TableCell>
+                  </TableRow>
+                ))
             ))}
         </TableBody>
       </Table>
