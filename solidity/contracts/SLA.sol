@@ -12,6 +12,8 @@ contract SLA {
         string ref; // ref to identify the consumers (copied from invite)
         uint256 providerBalance; // balance of the provider
         uint256 consumerBalance; // balance of the consumer
+        uint256 claimedProviderBalance; // claimed balance of the provider
+        uint256 claimedConsumerBalance; // claimed balance of the consumer
         uint256 createdAt; // timestamp of the contract creation
         uint256 validity; // timestamp of the contract validity
         uint256 consumerIndex; // index of the consumer in the consumers array
@@ -243,6 +245,8 @@ contract SLA {
             invitesMap[inviteHash].ref,
             fees,
             0,
+            0,
+            0,
             block.timestamp,
             block.timestamp + periodInSeconds,
             consumersCount
@@ -261,9 +265,9 @@ contract SLA {
     ) public view returns (uint256) {
         Consumer memory consumer = consumersMap[_contract];
         if (claimee == owner) {
-            return consumer.providerBalance;
+            return consumer.providerBalance - consumer.claimedProviderBalance;
         } else if (claimee == consumer.consumerAddress) {
-            return consumer.consumerBalance;
+            return consumer.consumerBalance - consumer.claimedConsumerBalance;
         }
         return 0;
     }
@@ -277,6 +281,15 @@ contract SLA {
         );
         uint256 claimableFees = getClaimableFees(_contract, msg.sender);
         require(claimableFees > 0, "No fees to claim");
+        if (msg.sender == owner) {
+            consumersMap[_contract].claimedProviderBalance += claimableFees;
+            consumers[consumer.consumerIndex]
+                .claimedProviderBalance += claimableFees;
+        } else if (msg.sender == consumer.consumerAddress) {
+            consumersMap[_contract].claimedConsumerBalance += claimableFees;
+            consumers[consumer.consumerIndex]
+                .claimedConsumerBalance += claimableFees;
+        }
         (bool sent, ) = msg.sender.call{value: claimableFees}("");
         require(sent, "Failed to send fees");
     }
