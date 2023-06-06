@@ -35,7 +35,7 @@ const ConsumersTable = () => {
       const sla = router.query['sla']
       if (sla) setSla((sla as string).trim())
     } else {
-      router.push('/dashboard')
+      router.push('/')
     }
   }, [router])
 

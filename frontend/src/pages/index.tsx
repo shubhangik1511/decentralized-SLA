@@ -8,7 +8,7 @@ const Page = () => {
 
   useEffect(() => {
     if (isConnected) {
-      router.push('/dashboard')
+      router.push('/create-sla')
     }
     router.push('/home')
   }, [isConnected, router])

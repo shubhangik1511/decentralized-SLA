@@ -53,7 +53,7 @@ const HomePage = () => {
 
   useEffect(() => {
     if (isConnected) {
-      router.push('/dashboard')
+      router.push('/create-sla')
     }
   }, [isConnected, router])
 
