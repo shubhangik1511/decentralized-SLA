@@ -12,6 +12,16 @@
         "type": "address"
       },
       {
+        "internalType": "address",
+        "name": "_functionsUptimeCheckerContactAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_functionsZendeskCheckerContractAddress",
+        "type": "address"
+      },
+      {
         "internalType": "uint64",
         "name": "_subscriptionId",
         "type": "uint64"
@@ -133,6 +143,21 @@
         "internalType": "uint256",
         "name": "_chargePerViolation",
         "type": "uint256"
+      },
+      {
+        "internalType": "string[]",
+        "name": "_uptimeArgs",
+        "type": "string[]"
+      },
+      {
+        "internalType": "string[]",
+        "name": "_zendeskArgs",
+        "type": "string[]"
+      },
+      {
+        "internalType": "string",
+        "name": "_zendeskSecrets",
+        "type": "string"
       }
     ],
     "name": "createSLAContract",
@@ -146,6 +171,32 @@
     "outputs": [
       {
         "internalType": "contract FunctionsConsumer",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "functionsUptimeCheckerContract",
+    "outputs": [
+      {
+        "internalType": "contract FunctionsUptimeChecker",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "functionsZendeskCheckerContract",
+    "outputs": [
+      {
+        "internalType": "contract FunctionsZendeskChecker",
         "name": "",
         "type": "address"
       }
@@ -290,6 +341,13 @@
       }
     ],
     "name": "removeAuthorizedWithdrawer",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "triggerCheckAllSLAs",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

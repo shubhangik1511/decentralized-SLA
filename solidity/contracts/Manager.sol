@@ -5,6 +5,7 @@ import "./SLA.sol";
 import "./FunctionsConsumer.sol";
 import "../interfaces/IManager.sol";
 import "./FunctionsUptimeChecker.sol";
+import "./FunctionsZendeskChecker.sol";
 
 contract Manager is IManager {
     SLAContract[] public allSLAs; // array of all SLA contracts
@@ -13,6 +14,7 @@ contract Manager is IManager {
     mapping(address => SLAContract[]) private consumerSLAs; // mapping of consumer address to SLA contracts
     FunctionsConsumer public functionsConsumerContract; // FunctionsConsumer contract address
     FunctionsUptimeChecker public functionsUptimeCheckerContract;
+    FunctionsZendeskChecker public functionsZendeskCheckerContract;
     uint256 public managerFees; // fees to be paid to the manager
     uint256 public managerBalance; // balance of the manager
     mapping(address => bool) public authorizedWithdrawers; // mapping of authorized withdrawers
@@ -25,6 +27,7 @@ contract Manager is IManager {
         uint256 _managerFees,
         address _functionsConsumerContractAddress,
         address _functionsUptimeCheckerContactAddress,
+        address _functionsZendeskCheckerContractAddress,
         uint64 _subscriptionId
     ) {
         managerFees = _managerFees;
@@ -33,6 +36,9 @@ contract Manager is IManager {
         );
         functionsUptimeCheckerContract = FunctionsUptimeChecker(
             _functionsUptimeCheckerContactAddress
+        );
+        functionsZendeskCheckerContract = FunctionsZendeskChecker(
+            _functionsZendeskCheckerContractAddress
         );
         authorizedWithdrawers[msg.sender] = true;
         subscriptionId = _subscriptionId;
@@ -58,28 +64,37 @@ contract Manager is IManager {
         string memory _name,
         uint256 _periodInDays,
         uint256 _fees,
-        uint256 _chargePerViolation
+        uint256 _chargePerViolation,
+        string[] memory _uptimeArgs,
+        string[] memory _zendeskArgs,
+        string memory _zendeskSecrets
     ) public {
-        address slaAddress = address(
-            new SLA(
-                _name,
-                _periodInDays,
-                _fees,
-                _chargePerViolation,
-                managerFees,
-                subscriptionId,
-                address(functionsConsumerContract),
-                address(functionsUptimeCheckerContract)
-            )
+        SLA sla = new SLA(
+            _name,
+            _periodInDays,
+            _fees,
+            _chargePerViolation,
+            managerFees,
+            subscriptionId,
+            address(functionsConsumerContract),
+            address(functionsUptimeCheckerContract),
+            address(functionsZendeskCheckerContract)
         );
-        SLAContract memory sla = SLAContract(
+        address slaAddress = address(sla);
+        SLAContract memory slaContract = SLAContract(
             slaAddress,
             _name,
             block.timestamp
         );
-        allSLAs.push(sla);
+        _zendeskArgs[0] = string(abi.encodePacked(slaAddress));
+        sla.updateUptimeCheckerArgs(
+            _uptimeArgs,
+            _zendeskArgs,
+            bytes(_zendeskSecrets)
+        );
+        allSLAs.push(slaContract);
         allSLAsMap[slaAddress] = true;
-        providerSLAs[msg.sender].push(sla);
+        providerSLAs[msg.sender].push(slaContract);
         functionsConsumerContract.addAuthorizedRequester(slaAddress);
         functionsUptimeCheckerContract.addAuthorizedRequester(slaAddress);
         emit SLAContractCreated(slaAddress);

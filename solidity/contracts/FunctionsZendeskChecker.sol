@@ -15,7 +15,6 @@ contract FunctionsZendeskChecker is FunctionsClient, ConfirmedOwner {
     bytes public latestError;
 
     string public source;
-    bytes secrets;
     mapping(bytes32 => address) public requestIdSlaMap;
 
     mapping(address => bool) public authorizedRequesters;
@@ -47,11 +46,9 @@ contract FunctionsZendeskChecker is FunctionsClient, ConfirmedOwner {
     // solhint-disable-next-line no-empty-blocks
     constructor(
         address oracle,
-        string memory _source,
-        bytes memory _secrets
+        string memory _source
     ) FunctionsClient(oracle) ConfirmedOwner(msg.sender) {
         source = _source;
-        secrets = _secrets;
     }
 
     /**
@@ -64,6 +61,7 @@ contract FunctionsZendeskChecker is FunctionsClient, ConfirmedOwner {
      */
     function executeRequest(
         string[] calldata args,
+        bytes memory secrets,
         uint64 subscriptionId,
         uint32 gasLimit
     ) public onlyAuthorizedRequester returns (bytes32) {

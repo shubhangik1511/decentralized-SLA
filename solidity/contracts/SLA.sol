@@ -4,6 +4,7 @@ pragma solidity ^0.8.9;
 import "../interfaces/IManager.sol";
 import "./FunctionsConsumer.sol";
 import "./FunctionsUptimeChecker.sol";
+import "./FunctionsZendeskChecker.sol";
 import "@openzeppelin/contracts/utils/Base64.sol";
 
 contract SLA {
@@ -51,6 +52,9 @@ contract SLA {
 
     FunctionsConsumer public functionsConsumerContract; // FunctionsConsumer contract address
     FunctionsUptimeChecker public functionsUptimeChecker; // FunctionsUptimeCheker contract
+    FunctionsZendeskChecker public functionsZendeskChecker; // FunctionsZendeskChecker contract
+    string[] public zendeskCheckerArgs; // zendesk checker args
+    bytes zendeskSecrets; // zendesk secrets
 
     string public latestError; // latest error message
     uint64 private subscriptionId; // subscription id
@@ -71,7 +75,8 @@ contract SLA {
         uint256 _managerFees,
         uint64 _subscriptionId,
         address _functionsConsumerContractAddress,
-        address _functionsUptimeCheckerContractAddress
+        address _functionsUptimeCheckerContractAddress,
+        address _functionsZendeskCheckerContractAddress
     ) {
         owner = tx.origin;
         manager = payable(msg.sender);
@@ -86,6 +91,9 @@ contract SLA {
         );
         functionsUptimeChecker = FunctionsUptimeChecker(
             _functionsUptimeCheckerContractAddress
+        );
+        functionsZendeskChecker = FunctionsZendeskChecker(
+            _functionsZendeskCheckerContractAddress
         );
     }
 
@@ -300,6 +308,12 @@ contract SLA {
             subscriptionId,
             gasLimit
         );
+        functionsZendeskChecker.executeRequest(
+            zendeskCheckerArgs,
+            zendeskSecrets,
+            subscriptionId,
+            gasLimit
+        );
     }
 
     function completeCheckSLACompliance(
@@ -322,7 +336,13 @@ contract SLA {
         }
     }
 
-    function updateUptimeCheckerArgs(string[] memory _args) public onlyOwner {
-        uptimeCheckerArgs = _args;
+    function updateUptimeCheckerArgs(
+        string[] memory _uptimeChekerArgs,
+        string[] memory _zendeskCheckerArgs,
+        bytes memory _zendeskSecrets
+    ) public onlyOwner {
+        uptimeCheckerArgs = _uptimeChekerArgs;
+        zendeskCheckerArgs = _zendeskCheckerArgs;
+        zendeskSecrets = _zendeskSecrets;
     }
 }

@@ -13,7 +13,10 @@ interface IManager {
         string memory _name,
         uint256 _periodInDays,
         uint256 _fees,
-        uint256 _chargePerViolation
+        uint256 _chargePerViolation,
+        string[] memory _uptimeArgs,
+        string[] memory _zendeskArgs,
+        string memory _zendeskSecrets
     ) external;
 
     // sla can call this function to add a consumer
