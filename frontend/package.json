@@ -1,48 +1,22 @@
 {
-  "name": "materio-mui-react-nextjs-admin-template-free",
-  "description": "Most Powerful & Comprehensive Free MUI React NextJS Admin Dashboard Template built for developers! 🚀",
+  "name": "decentralized-sla",
+  "description": "Decentralized SLA for Chainlink Hackathon",
   "license": "MIT",
   "version": "1.0.0",
-  "author": {
-    "name": "ThemeSelection",
-    "url": "https://themeselection.com/"
-  },
-  "bugs": {
-    "url": "https://github.com/themeselection/materio-mui-react-nextjs-admin-template-free/issues"
-  },
   "private": false,
   "repository": {
     "type": "git",
-    "url": "https://github.com/themeselection/materio-mui-react-nextjs-admin-template-free.git"
+    "url": "https://github.com/shubhangik1511/decentralized-SLA.git"
   },
   "homepage": "https://shubhangik1511.github.io/decentralized-SLA",
-  "keywords": [
-    "react",
-    "javascript",
-    "admin",
-    "typescript",
-    "dashboard",
-    "material-design",
-    "nextjs",
-    "material-ui",
-    "admin-dashboard",
-    "free",
-    "mui",
-    "admin-template",
-    "admin-panel",
-    "freebies",
-    "nextjs-template",
-    "react-dashboard",
-    "themeselection"
-  ],
+  "keywords": [],
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "export": "next export",
     "lint": "eslint --fix \"src/**/*.{js,jsx,ts,tsx}\"",
-    "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx}\"",
-    "codegen": "graphql-codegen --config codegen.ts"
+    "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx}\""
   },
   "dependencies": {
     "@emotion/cache": "^11.6.0",
@@ -58,7 +32,6 @@
     "apexcharts-clevision": "3.28.5",
     "clsx": "^1.1.1",
     "ethers": "^5",
-    "graphql": "^16.6.0",
     "mdi-material-ui": "^7.1.0",
     "next": "12.0.4",
     "nprogress": "^0.2.0",
@@ -72,9 +45,6 @@
     "wagmi": "^1.0.5"
   },
   "devDependencies": {
-    "@graphql-codegen/cli": "^3.3.1",
-    "@graphql-codegen/typescript-operations": "^3.0.4",
-    "@graphql-codegen/typescript-react-query": "^4.1.0",
     "@types/node": "16.11.11",
     "@types/nprogress": "^0.2.0",
     "@types/react": "17.0.37",
