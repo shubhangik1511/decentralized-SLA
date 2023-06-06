@@ -12,7 +12,6 @@ import { Settings } from 'src/@core/context/settingsContext'
 
 // ** Components
 import ModeToggler from 'src/@core/layouts/components/shared-components/ModeToggler'
-import NotificationDropdown from 'src/@core/layouts/components/shared-components/NotificationDropdown'
 
 import { Web3Button } from '@web3modal/react'
 
@@ -46,7 +45,6 @@ const AppBarContent = (props: Props) => {
 
       <Box className='actions-right' sx={{ display: 'flex', alignItems: 'center' }}>
         <ModeToggler settings={settings} saveSettings={saveSettings} />
-        <NotificationDropdown />
         <Web3Button />
       </Box>
     </Box>
