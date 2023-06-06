@@ -10,6 +10,7 @@ import CircularProgress from '@mui/material/CircularProgress'
 import Typography from '@mui/material/Typography'
 import Box, { BoxProps } from '@mui/material/Box'
 import ArrowLeft from 'mdi-material-ui/ArrowLeft'
+import Button from '@mui/material/Button'
 
 // ** Third Party Styles Imports
 import 'react-datepicker/dist/react-datepicker.css'
@@ -129,6 +130,15 @@ const SLA = () => {
                       }}
                     />
                     {name}
+                    <Button
+                      variant='outlined'
+                      size='medium'
+                      style={{ marginLeft: 'auto' }}
+
+                      // onClick={() => router.push(`/invite-consumer?sla=${row.slaAddress}`)}
+                    >
+                      Claim
+                    </Button>
                   </Typography>
                   <Divider sx={{ marginTop: 6.5, marginBottom: 6.75 }} />
                   <Grid container spacing={4}>

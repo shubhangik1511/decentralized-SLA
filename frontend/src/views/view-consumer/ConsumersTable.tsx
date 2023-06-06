@@ -8,6 +8,7 @@ import TableHead from '@mui/material/TableHead'
 import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
 import TableContainer from '@mui/material/TableContainer'
+import Button from '@mui/material/Button'
 
 // ** Next Import
 import { useRouter } from 'next/router'
@@ -47,6 +48,7 @@ const ConsumersTable = () => {
             <TableCell align='left'>Ref</TableCell>
             <TableCell align='center'>Consumer Address</TableCell>
             <TableCell align='center'>Validity</TableCell>
+            <TableCell align='center'>Actions</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -74,6 +76,17 @@ const ConsumersTable = () => {
                       {row.consumerAddress}
                     </TableCell>
                     <TableCell align='center'>{new Date(Number(row.validity) * 1000).toUTCString()}</TableCell>
+                    <TableCell align='center' sx={{ maxWidth: '140px' }}>
+                      <Button
+                        variant='outlined'
+                        size='small'
+                        sx={{ width: '100%' }}
+
+                        // onClick={() => router.push(`/invite-consumer?sla=${row.slaAddress}`)}
+                      >
+                        Claim
+                      </Button>
+                    </TableCell>
                   </TableRow>
                 ))
             ))}
