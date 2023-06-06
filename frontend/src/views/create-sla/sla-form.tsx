@@ -32,6 +32,13 @@ const SLAForm = () => {
   const [period, setPeriod] = useState<number>(30)
   const [fee, setFee] = useState<bigint>(BigInt(0))
   const [chargePerViolation, setChargePerViolation] = useState<bigint>(BigInt(0))
+  const [apiToCheck, setApiToCheck] = useState<string>('')
+  const [method, setMethod] = useState<string>('')
+  const [path, setPath] = useState<string>('')
+  const [expectedValue, setExpectedValue] = useState<string>('')
+  const [zendeskSecret, setZendeskSecret] = useState<string>('')
+  const [zendeskMaxFirstResponseTime, setZendeskMaxFirstResponseTime] = useState<number>(24)
+  const [zendeskSubdomain, setZendeskSubdomain] = useState<string>('')
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [showError, setShowError] = useState<boolean>(false)
   const router = useRouter()
@@ -44,7 +51,15 @@ const SLAForm = () => {
     address: process.env.NEXT_PUBLIC_MANAGER_CONTRACT_ADDRESS as `0x${string}`,
     abi: managerAbi,
     functionName: 'createSLAContract',
-    args: [name, period, fee, chargePerViolation]
+    args: [
+      name,
+      period,
+      fee,
+      chargePerViolation,
+      [apiToCheck, method, path, expectedValue],
+      ['', BigInt(zendeskMaxFirstResponseTime), zendeskSubdomain],
+      zendeskSecret
+    ]
   })
   const { data, write } = useContractWrite(config)
 
@@ -140,6 +155,76 @@ const SLAForm = () => {
               onChange={e => setChargePerViolation(convertToBigNumber(e.target.value))}
               placeholder='Amount to charge per violation'
               defaultValue='0'
+            />
+          </Grid>
+
+          <Grid item xs={12} sm={6}>
+            <TextField
+              fullWidth
+              label='API to check'
+              onChange={e => setApiToCheck(e.target.value)}
+              placeholder='API to check'
+              defaultValue=''
+            />
+          </Grid>
+
+          <Grid item xs={12} sm={6}>
+            <TextField
+              fullWidth
+              label='Method'
+              onChange={e => setMethod(e.target.value)}
+              placeholder='Method'
+              defaultValue=''
+            />
+          </Grid>
+
+          <Grid item xs={12} sm={6}>
+            <TextField
+              fullWidth
+              label='Path'
+              onChange={e => setPath(e.target.value)}
+              placeholder='Path'
+              defaultValue=''
+            />
+          </Grid>
+
+          <Grid item xs={12} sm={6}>
+            <TextField
+              fullWidth
+              label='Expected Value'
+              onChange={e => setExpectedValue(e.target.value)}
+              placeholder='Expected Value'
+              defaultValue=''
+            />
+          </Grid>
+
+          <Grid item xs={12} sm={6}>
+            <TextField
+              fullWidth
+              label='Zendesk Secret'
+              onChange={e => setZendeskSecret(e.target.value)}
+              placeholder='Zendesk Secret'
+              defaultValue=''
+            />
+          </Grid>
+
+          <Grid item xs={12} sm={6}>
+            <TextField
+              fullWidth
+              label='Zendesk Max First Response Time'
+              onChange={e => setZendeskMaxFirstResponseTime(Number(e.target.value))}
+              placeholder='Zendesk Max First Response Time (in hours)'
+              defaultValue={24}
+            />
+          </Grid>
+
+          <Grid item xs={12} sm={6}>
+            <TextField
+              fullWidth
+              label='Zendesk Subdomain'
+              onChange={e => setZendeskSubdomain(e.target.value)}
+              placeholder='Zendesk Subdomain'
+              defaultValue=''
             />
           </Grid>
 
