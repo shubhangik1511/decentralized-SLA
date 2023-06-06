@@ -58,7 +58,12 @@ const VerticalNavHeader = (props: Props) => {
       ) : (
         <Link href='/' passHref>
           <StyledLink>
-            <img src='/images/logo.png' alt='logo' height='40px' style={{ margin: '10px', marginRight: '0px' }} />
+            <img
+              src='/decentralized-SLA/images/logo.png'
+              alt='logo'
+              height='40px'
+              style={{ margin: '10px', marginRight: '0px' }}
+            />
             <HeaderTitle variant='h6' sx={{ ml: 3 }}>
               {themeConfig.templateName}
             </HeaderTitle>
