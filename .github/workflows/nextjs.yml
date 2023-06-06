@@ -34,8 +34,9 @@ jobs:
       - name: Keep only frontend
         run: |
           mv ${{ github.workspace }}/frontend ../frontend
-          rm -r .
+          rm -r ${{ github.workspace }}
           mv ../frontend ${{ github.workspace }}
+          cp .env.prod .env
       - name: Detect package manager
         id: detect-package-manager
         run: |
