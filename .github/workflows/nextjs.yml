@@ -33,9 +33,9 @@ jobs:
         uses: actions/checkout@v3
       - name: Keep only frontend
         run: |
-          mv -r ${{ github.workspace }}/frontend ../frontend
+          mv ${{ github.workspace }}/frontend ../frontend
           rm -r .
-          mv -r ../frontend ${{ github.workspace }}
+          mv ../frontend ${{ github.workspace }}
       - name: Detect package manager
         id: detect-package-manager
         run: |
