@@ -36,7 +36,7 @@ jobs:
           mv ${{ github.workspace }}/frontend ../frontend
           rm -r ${{ github.workspace }}
           mv ../frontend ${{ github.workspace }}
-          cp .env.prod .env
+          cp ${{ github.workspace }}/.env.prod ${{ github.workspace }}/.env
       - name: Detect package manager
         id: detect-package-manager
         run: |
