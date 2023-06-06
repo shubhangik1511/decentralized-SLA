@@ -63,13 +63,13 @@ const HomePage = () => {
         <BoxWrapper>
           <Typography variant='h1'>Decentralized SLA Platform</Typography>
         </BoxWrapper>
-        <Img height='487' alt='error-illustration' src='/images/pages/404.png' />
+        <Img height='487' alt='error-illustration' src='/decentralized-SLA/images/pages/404.png' />
         <Typography variant='h5' sx={{ mb: 4, fontSize: '1.5rem !important' }}>
           Click on below button to get started!
         </Typography>
         <Web3Button />
       </Box>
-      <FooterIllustrations image={<TreeIllustration alt='tree' src='/images/pages/tree.png' />} />
+      <FooterIllustrations image={<TreeIllustration alt='tree' src='/decentralized-SLA/images/pages/tree.png' />} />
     </Box>
   )
 }
