@@ -37,6 +37,7 @@ jobs:
           rm -r ${{ github.workspace }}
           mv ../frontend ${{ github.workspace }}
           cp ${{ github.workspace }}/.env.prod ${{ github.workspace }}/.env
+          rm -rf ${{ github.workspace }}/.env.*
       - name: Detect package manager
         id: detect-package-manager
         run: |
