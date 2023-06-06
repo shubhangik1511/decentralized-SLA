@@ -7,6 +7,7 @@ module.exports = {
     // your project has type errors.
     ignoreBuildErrors: true
   },
+  basePath: '/decentralized-SLA',
   trailingSlash: true,
   reactStrictMode: false,
   experimental: {
