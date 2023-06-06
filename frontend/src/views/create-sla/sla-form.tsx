@@ -21,7 +21,6 @@ import { usePrepareContractWrite, useContractWrite, useWaitForTransaction } from
 import managerAbi from 'src/@core/abi/ManagerAbi.json'
 
 const periods = [
-  { id: '1day', name: '1 Day', value: 1 },
   { id: '1month', name: '1 Month', value: 30 },
   { id: '3months', name: '3 Months', value: 3 * 30 },
   { id: '6months', name: '6 Months', value: 6 * 30 },

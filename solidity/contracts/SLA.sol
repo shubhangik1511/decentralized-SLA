@@ -43,7 +43,7 @@ contract SLA {
 
     Consumer[] private consumers; // array of all consumers
     uint256 public consumersCount; // number of consumers
-    mapping(address => Consumer) private consumersMap; // mapping of consumer address to contract
+    mapping(address => Consumer) public consumersMap; // mapping of consumer address to contract
     Invite[] private invites; // array of all invites
     uint256 public invitesCount; // number of invites
     mapping(bytes => Invite) private invitesMap; // mapping of invite string to invite

@@ -7,9 +7,13 @@ import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
 import TableContainer from '@mui/material/TableContainer'
 import OpenInNew from 'mdi-material-ui/OpenInNew'
+import Button from '@mui/material/Button'
+import EyeSettingsOutline from 'mdi-material-ui/EyeSettingsOutline'
 
 import { useContractRead, useAccount } from 'wagmi'
 import managerAbi from 'src/@core/abi/ManagerAbi.json'
+
+import { useRouter } from 'next/router'
 
 interface Contract {
   name: string
@@ -19,6 +23,7 @@ interface Contract {
 
 const ContractsTable = () => {
   const { address } = useAccount()
+  const router = useRouter()
   const { data, isError, isLoading } = useContractRead({
     address: process.env.NEXT_PUBLIC_MANAGER_CONTRACT_ADDRESS as `0x${string}`,
     abi: managerAbi,
@@ -34,6 +39,7 @@ const ContractsTable = () => {
             <TableCell>Name</TableCell>
             <TableCell align='center'>Address</TableCell>
             <TableCell align='center'>Created At</TableCell>
+            <TableCell align='center'>Actions</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -70,6 +76,17 @@ const ContractsTable = () => {
                       </>
                     </TableCell>
                     <TableCell align='center'>{new Date(Number(row.createdAt) * 1000).toUTCString()}</TableCell>
+                    <TableCell align='center' sx={{ maxWidth: '140px' }}>
+                      <Button
+                        variant='outlined'
+                        size='small'
+                        sx={{ width: '100%' }}
+                        onClick={() => router.push(`/contract?sla=${row.slaAddress}`)}
+                      >
+                        <EyeSettingsOutline fontSize='small' sx={{ marginRight: 1 }} />
+                        View More
+                      </Button>
+                    </TableCell>
                   </TableRow>
                 ))
             ))}

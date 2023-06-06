@@ -35,6 +35,11 @@
                 "internalType": "address",
                 "name": "_functionsConsumerContractAddress",
                 "type": "address"
+            },
+            {
+                "internalType": "address",
+                "name": "_functionsUptimeCheckerContractAddress",
+                "type": "address"
             }
         ],
         "stateMutability": "nonpayable",
@@ -117,12 +122,94 @@
         "type": "function"
     },
     {
+        "inputs": [
+            {
+                "internalType": "bytes32",
+                "name": "_requestId",
+                "type": "bytes32"
+            },
+            {
+                "internalType": "bytes",
+                "name": "response",
+                "type": "bytes"
+            },
+            {
+                "internalType": "bytes",
+                "name": "err",
+                "type": "bytes"
+            }
+        ],
+        "name": "completeCheckSLACompliance",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
         "inputs": [],
         "name": "consumersCount",
         "outputs": [
             {
                 "internalType": "uint256",
                 "name": "",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+            }
+        ],
+        "name": "consumersMap",
+        "outputs": [
+            {
+                "internalType": "address",
+                "name": "consumerAddress",
+                "type": "address"
+            },
+            {
+                "internalType": "string",
+                "name": "ref",
+                "type": "string"
+            },
+            {
+                "internalType": "uint256",
+                "name": "providerBalance",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "consumerBalance",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "claimedProviderBalance",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "claimedConsumerBalance",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "createdAt",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "validity",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "consumerIndex",
                 "type": "uint256"
             }
         ],
@@ -204,6 +291,19 @@
         "type": "function"
     },
     {
+        "inputs": [],
+        "name": "functionsUptimeChecker",
+        "outputs": [
+            {
+                "internalType": "contract FunctionsUptimeChecker",
+                "name": "",
+                "type": "address"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
         "inputs": [
             {
                 "internalType": "address",
@@ -251,6 +351,16 @@
                     {
                         "internalType": "uint256",
                         "name": "consumerBalance",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "claimedProviderBalance",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "claimedConsumerBalance",
                         "type": "uint256"
                     },
                     {
@@ -496,6 +606,51 @@
             }
         ],
         "name": "requestIdRefMap",
+        "outputs": [
+            {
+                "internalType": "string",
+                "name": "",
+                "type": "string"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint32",
+                "name": "gasLimit",
+                "type": "uint32"
+            }
+        ],
+        "name": "triggerCheckSLACompliance",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "string[]",
+                "name": "_args",
+                "type": "string[]"
+            }
+        ],
+        "name": "updateUptimeCheckerArgs",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "name": "uptimeCheckerArgs",
         "outputs": [
             {
                 "internalType": "string",
