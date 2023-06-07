@@ -1,6 +1,0 @@
-# Delete me when something else is added
-query Users {
-  users {
-    emailId
-  }
-}

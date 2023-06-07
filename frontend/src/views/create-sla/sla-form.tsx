@@ -57,7 +57,7 @@ const SLAForm = () => {
       fee,
       chargePerViolation,
       [apiToCheck, method, path, expectedValue],
-      ['', BigInt(zendeskMaxFirstResponseTime), zendeskSubdomain],
+      ['', String(zendeskMaxFirstResponseTime), zendeskSubdomain],
       zendeskSecret
     ]
   })
@@ -110,7 +110,7 @@ const SLAForm = () => {
               </IconButton>
             }
           >
-            <AlertTitle>{JSON.stringify(prepareError || error)}</AlertTitle>
+            <AlertTitle>There is some error</AlertTitle>
           </Alert>
         </Grid>
       ) : null}
@@ -128,7 +128,7 @@ const SLAForm = () => {
           <Grid item xs={12} sm={6}>
             <FormControl fullWidth>
               <InputLabel>Period</InputLabel>
-              <Select label='Period' defaultValue={30} onChange={e => setPeriod(Number(e.target.value))}>
+              <Select label='Period of contract' defaultValue={30} onChange={e => setPeriod(Number(e.target.value))}>
                 {periods.map(period => (
                   <MenuItem key={period.id} value={period.value}>
                     {period.name}
@@ -161,7 +161,7 @@ const SLAForm = () => {
           <Grid item xs={12} sm={6}>
             <TextField
               fullWidth
-              label='API to check'
+              label='API to check (eg: https://www.githubstatus.com/api/v2/status.json)'
               onChange={e => setApiToCheck(e.target.value)}
               placeholder='API to check'
               defaultValue=''
@@ -171,7 +171,7 @@ const SLAForm = () => {
           <Grid item xs={12} sm={6}>
             <TextField
               fullWidth
-              label='Method'
+              label='Method (GET/POST)'
               onChange={e => setMethod(e.target.value)}
               placeholder='Method'
               defaultValue=''
@@ -181,7 +181,7 @@ const SLAForm = () => {
           <Grid item xs={12} sm={6}>
             <TextField
               fullWidth
-              label='Path'
+              label='JSON Path (eg: status.description)'
               onChange={e => setPath(e.target.value)}
               placeholder='Path'
               defaultValue=''
@@ -191,7 +191,7 @@ const SLAForm = () => {
           <Grid item xs={12} sm={6}>
             <TextField
               fullWidth
-              label='Expected Value'
+              label='Expected Value at the path (eg: All Systems Operational)'
               onChange={e => setExpectedValue(e.target.value)}
               placeholder='Expected Value'
               defaultValue=''
@@ -201,7 +201,7 @@ const SLAForm = () => {
           <Grid item xs={12} sm={6}>
             <TextField
               fullWidth
-              label='Zendesk Secret'
+              label='Zendesk Secret (encrypted github gist URL)'
               onChange={e => setZendeskSecret(e.target.value)}
               placeholder='Zendesk Secret'
               defaultValue=''
@@ -211,7 +211,7 @@ const SLAForm = () => {
           <Grid item xs={12} sm={6}>
             <TextField
               fullWidth
-              label='Zendesk Max First Response Time'
+              label='Zendesk Max First Response Time (Hours)'
               onChange={e => setZendeskMaxFirstResponseTime(Number(e.target.value))}
               placeholder='Zendesk Max First Response Time (in hours)'
               defaultValue={24}
@@ -221,7 +221,7 @@ const SLAForm = () => {
           <Grid item xs={12} sm={6}>
             <TextField
               fullWidth
-              label='Zendesk Subdomain'
+              label='Zendesk Subdomain (eg: https://wagmi.zendesk.com -> wagmi)'
               onChange={e => setZendeskSubdomain(e.target.value)}
               placeholder='Zendesk Subdomain'
               defaultValue=''

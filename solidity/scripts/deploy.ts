@@ -10,6 +10,7 @@ async function main() {
     0.001 * 10 ** 18,
     "0x00F03f79C6A13AE6A8168d36da73ecC19DfbB915",
     "0x3AA6d8d2151aC8dD8A40e605D051c2E01Aadd4d9",
+    "0xA9dCE61f7a99f6A9ee2F517BF179470A5B5530DD",
     1527
   );
   await manager.deployed();
@@ -20,7 +21,15 @@ async function main() {
       "Sample Contract 1",
       30,
       0.001 * 10 ** 18,
-      0.0001 * 10 ** 18
+      0.0001 * 10 ** 18,
+      [
+        "https://www.githubstatus.com/api/v2/status.json",
+        "GET",
+        "status.description",
+        "All Systems Operational",
+      ],
+      ["0xBb1dB45f58135135B9f0525e4f15A5B1bbB7807d", "1", "cakesofttechhelp"],
+      "https://gist.github.com/negative0/6163e95f6e6293f61930606fda437518"
     )
   ).wait();
   const slaContractAddress = slaContractTransaction.events?.find(
@@ -48,12 +57,6 @@ async function main() {
       }
     )
   ).wait(2);
-  await sla.updateUptimeCheckerArgs([
-    "https://www.githubstatus.com/api/v2/status.json",
-    "GET",
-    "status.description",
-    "All Systems Operational",
-  ]);
   console.log("result status", result.status);
 }
 

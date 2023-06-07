@@ -21,7 +21,7 @@ return Functions.encodeString("" + output);
 
 async function checkTickets(api, slaAddress) {
   try {
-    console.log("\nChecking if api is up...");
+    console.log("\nChecking for new tickets...");
     const apiCheckResponse = await Functions.makeHttpRequest({
       url: api,
       method: "GET",

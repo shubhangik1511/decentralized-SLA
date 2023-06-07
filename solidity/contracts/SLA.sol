@@ -340,7 +340,7 @@ contract SLA {
         string[] memory _uptimeChekerArgs,
         string[] memory _zendeskCheckerArgs,
         bytes memory _zendeskSecrets
-    ) public onlyOwner {
+    ) public onlyManager {
         uptimeCheckerArgs = _uptimeChekerArgs;
         zendeskCheckerArgs = _zendeskCheckerArgs;
         zendeskSecrets = _zendeskSecrets;

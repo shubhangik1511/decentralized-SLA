@@ -93,14 +93,13 @@ async function main() {
 
   const functionsConsumer = await FunctionsConsumer.deploy(
     network.functionsOracleProxy,
-    request.source,
-    request.secrets ?? []
+    request.source
   );
 
   await functionsConsumer.deployed();
 
   console.log(
-    `FunctionsUptimeChecker deployed to ${functionsConsumer.address}`
+    `FunctionsZendeskChecker deployed to ${functionsConsumer.address}`
   );
 }
 
