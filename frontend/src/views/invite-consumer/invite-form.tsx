@@ -35,7 +35,11 @@ const InviteForm = () => {
     functionName: 'inviteConsumer',
     args: [
       ref,
-      [email, `${process.env.NEXT_PUBLIC_BASE_URL}/accept-invite?sla=${sla}`, Math.floor(Date.now() / 1000).toString()],
+      [
+        email,
+        `${process.env.NEXT_PUBLIC_BASE_URL}/accept-invite/?sla=${sla}`,
+        Math.floor(Date.now() / 1000).toString()
+      ],
       BigInt(300000)
     ],
     gas: BigInt(1_500_000)

@@ -31,7 +31,7 @@ const UserLayout = ({ children }: Props) => {
   const router = useRouter()
 
   useEffect(() => {
-    if (!isConnected) {
+    if (!isConnected && !router.pathname.includes('accept-invite')) {
       router.push('/home')
     }
   }, [isConnected, router])
