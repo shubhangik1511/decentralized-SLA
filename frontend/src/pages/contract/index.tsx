@@ -102,7 +102,6 @@ const SLA = () => {
       setName(data[0]?.result as string)
       setDuration(data[1]?.result as string)
       setExecutionStart(data[2]?.result[6] as string)
-      console.log('executionStart', executionStart)
       setTotalFees(data[3]?.result as string)
       setClaimableAmount(data[4]?.result as string)
       setChargePerViolation(data[5]?.result as string)

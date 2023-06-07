@@ -110,7 +110,7 @@ const SLAForm = () => {
               </IconButton>
             }
           >
-            <AlertTitle>There is some error</AlertTitle>
+            <AlertTitle>{JSON.stringify(prepareError || error)}</AlertTitle>
           </Alert>
         </Grid>
       ) : null}
