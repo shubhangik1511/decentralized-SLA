@@ -54,7 +54,7 @@ const ConsumersTable = () => {
         <TableBody>
           {data &&
             (!isError && !isLoading && (data as Consumer[]).length === 0 ? (
-              <TableCell align='center' colSpan={3}>
+              <TableCell align='center' colSpan={4}>
                 No data found.
               </TableCell>
             ) : (

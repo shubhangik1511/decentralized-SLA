@@ -45,7 +45,7 @@ const ContractsTable = () => {
         <TableBody>
           {data &&
             (!isError && !isLoading && (data as Contract[]).length === 0 ? (
-              <TableCell align='center' colSpan={3}>
+              <TableCell align='center' colSpan={4}>
                 No data found.
               </TableCell>
             ) : (

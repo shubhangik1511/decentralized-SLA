@@ -130,13 +130,7 @@ const SLA = () => {
                       }}
                     />
                     {name}
-                    <Button
-                      variant='outlined'
-                      size='medium'
-                      style={{ marginLeft: 'auto' }}
-
-                      // onClick={() => router.push(`/invite-consumer?sla=${row.slaAddress}`)}
-                    >
+                    <Button variant='outlined' size='medium' style={{ marginLeft: 'auto' }}>
                       Claim
                     </Button>
                   </Typography>
