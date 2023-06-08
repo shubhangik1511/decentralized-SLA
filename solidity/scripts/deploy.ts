@@ -28,7 +28,7 @@ async function main() {
         "status.description",
         "All Systems Operational",
       ],
-      ["0xBb1dB45f58135135B9f0525e4f15A5B1bbB7807d", "1", "cakesofttechhelp"],
+      ["", "1", "cakesofttechhelp"],
       "https://gist.github.com/negative0/6163e95f6e6293f61930606fda437518"
     )
   ).wait();
