@@ -166,7 +166,7 @@ const SLA = () => {
                             Claimable Amount:
                           </Typography>
                           <Typography variant='body2' sx={{ color: 'primary.main' }}>
-                            {Number(claimableAmount)} MATIC
+                            {Number(claimableAmount) / 10 ** 18} MATIC
                           </Typography>
                         </Box>
                       </StyledBox>
