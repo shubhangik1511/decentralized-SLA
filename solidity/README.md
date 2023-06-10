@@ -92,7 +92,13 @@ Steps to run:
    npx hardhat functions-sub-create --network REPLACE_NETWORK
    ```
 
-1. Set the env file using
+1. Set the password for env-enc using:
+
+   ```
+   npx env-enc set-pw
+   ```
+
+1. Set the environment variables one-by-one by using
 
    ```
    npx env-env set
@@ -108,8 +114,6 @@ Steps to run:
    - POLYGONSCAN_API_KEY: Needed to access the PolygonScan API and verify contracts on the Polygon network programmatically.
    - ZENDESK_API_KEY: Required to access the Zendesk customer support platform's API and integrate its functionality into custom applications or automate tasks.
 
-1. Set relevant secrets in the environment. We are using env-enc here to encrypt the secrets
-
 > Note: Don't forget to copy the addresses of these contracts as we will need them for further steps
 
 1. Deploy the consumer for sending emails using Courier:
@@ -118,26 +122,26 @@ Steps to run:
    npx hardhat run --network REPLACE_NETWORK scripts/deploycourierconsumer.ts
    ```
 
-1. Deploy the functions consumer for Checking uptime:
+2. Deploy the functions consumer for Checking uptime:
 
    ```
    npx hardhat run --network REPLACE_NETWORK scripts/deployuptimechecker.ts
    ```
 
-1. Deploy the functions consumer for Checking tickets in Zendesk:
+3. Deploy the functions consumer for Checking tickets in Zendesk:
 
    ```
    npx hardhat run --network REPLACE_NETWORK scripts/deployzendeskchecker.ts
    ```
 
-1. Add all of the above 3 contracts to a chainlink subscription.
+4. Add all of the above 3 contracts to a chainlink subscription one-by-one:
    ```
    npx hardhat --network REPLACE_NETWORK  functions-sub-add --contract <<contract_address>> --subid <<sub_id>>
    ```
 
 Once we have the addresses for all the consumers, we can move on to deploying the Manager contract, which is the heart of this project.
 
-1. Add these addresses into the `scripts/deploymanager.ts` file:
+1. Add these addresses, and subscription id into the `scripts/deploymanager.ts` file:
 
    ```language/typescript
    const manager = await ManagerContract.deploy(
