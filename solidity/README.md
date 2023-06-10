@@ -92,6 +92,12 @@ Steps to run:
    npx hardhat functions-sub-create --network REPLACE_NETWORK
    ```
 
+1. Fund the subscription using:
+
+   ```
+   npx hardhat functions-sub-fund --subid REPLACE_SUBSCRIPTION_ID --amount REPLACE_LINK_AMOUNT --network REPLACE_NETWORK
+   ```
+
 1. Set the password for env-enc using:
 
    ```
