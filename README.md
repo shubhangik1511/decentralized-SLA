@@ -23,7 +23,7 @@ By leveraging the decentralized nature of blockchain, DSLA removes the need for 
 
 ### Architecture:
 
-![DSLA Architecture](/frontend/public/images/DSLAArchitecture.png)
+![DSLA Architecture](../frontend/public/images/DSLAArchitecture.png)
 
 ### Steps for onboarding a consumer
 
