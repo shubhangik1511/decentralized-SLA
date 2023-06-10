@@ -8,20 +8,15 @@ import TableHead from '@mui/material/TableHead'
 import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
 import TableContainer from '@mui/material/TableContainer'
-import AlertTitle from '@mui/material/AlertTitle'
 import Button from '@mui/material/Button'
-import Grid from '@mui/material/Grid'
-import Alert from '@mui/material/Alert'
-import IconButton from '@mui/material/IconButton'
 import CircularProgress from '@mui/material/CircularProgress'
-
-import Close from 'mdi-material-ui/Close'
+import Tooltip from '@mui/material/Tooltip'
 
 // ** Next Import
 import { useRouter } from 'next/router'
 
-import { useContractRead, usePrepareContractWrite, useAccount, useWaitForTransaction, useContractWrite } from 'wagmi'
 import slaAbi from 'src/@core/abi/SlaAbi.json'
+import { useAccount, useContractRead, useContractWrite, usePrepareContractWrite, useWaitForTransaction } from 'wagmi'
 
 interface Consumer {
   consumerAddress: string
@@ -101,21 +96,6 @@ const ConsumersTable = () => {
 
   return (
     <TableContainer component={Paper}>
-      {showError ? (
-        <Grid item xs={12} sx={{ mb: 3 }}>
-          <Alert
-            severity='warning'
-            sx={{ '& a': { fontWeight: 400 } }}
-            action={
-              <IconButton size='small' color='inherit' aria-label='close' onClick={() => setShowError(false)}>
-                <Close fontSize='inherit' />
-              </IconButton>
-            }
-          >
-            <AlertTitle>{JSON.stringify(prepareError || txError || claimError)}</AlertTitle>
-          </Alert>
-        </Grid>
-      ) : null}
       <Table sx={{ minWidth: 650 }} aria-label='simple table'>
         <TableHead>
           <TableRow>
@@ -151,9 +131,21 @@ const ConsumersTable = () => {
                     </TableCell>
                     <TableCell align='center'>{new Date(Number(row.validity) * 1000).toUTCString()}</TableCell>
                     <TableCell align='center' sx={{ maxWidth: '140px' }}>
-                      <Button variant='outlined' size='small' sx={{ width: '100%' }} disabled={!write} onClick={write}>
-                        Claim
-                      </Button>
+                      {/* 
+                          // @ts-ignore */}
+                      <Tooltip title={prepareError ? prepareError?.shortMessage : ''} style={{ marginLeft: 'auto' }}>
+                        <span>
+                          <Button
+                            variant='outlined'
+                            size='small'
+                            sx={{ width: '100%' }}
+                            disabled={!write}
+                            onClick={write}
+                          >
+                            Claim
+                          </Button>
+                        </span>
+                      </Tooltip>
                     </TableCell>
                   </TableRow>
                 ))

@@ -11,10 +11,7 @@ import Typography from '@mui/material/Typography'
 import Box, { BoxProps } from '@mui/material/Box'
 import ArrowLeft from 'mdi-material-ui/ArrowLeft'
 import Button from '@mui/material/Button'
-import Alert from '@mui/material/Alert'
-import IconButton from '@mui/material/IconButton'
-import AlertTitle from '@mui/material/AlertTitle'
-import Close from 'mdi-material-ui/Close'
+import Tooltip from '@mui/material/Tooltip'
 
 // ** Third Party Styles Imports
 import 'react-datepicker/dist/react-datepicker.css'
@@ -41,7 +38,6 @@ const SLA = () => {
   const [uptimeViolations, setUptimeViolations] = useState<string>('')
   const [firstResponseTimeViolations, setFirstResponseTimeViolations] = useState<string>('')
   const [isLoading, setIsLoading] = useState<boolean>(false)
-  const [showError, setShowError] = useState<boolean>(false)
 
   const router = useRouter()
   const { address } = useAccount()
@@ -121,11 +117,7 @@ const SLA = () => {
     }
   }, [data, executionStart, isTxError, isTxLoading])
 
-  const {
-    config,
-    error: prepareError,
-    isError: isPrepareError
-  } = usePrepareContractWrite({
+  const { config, error: prepareError } = usePrepareContractWrite({
     address: sla as `0x${string}`,
     abi: slaAbi,
     functionName: 'claimFees',
@@ -134,22 +126,9 @@ const SLA = () => {
 
   const { data: claimData, write } = useContractWrite(config)
 
-  const {
-    isLoading: isClaimLoading,
-    isSuccess: isClaimSuccess,
-    error: claimError,
-    isError: isClaimError
-  } = useWaitForTransaction({
+  const { isLoading: isClaimLoading, isSuccess: isClaimSuccess } = useWaitForTransaction({
     hash: claimData?.hash
   })
-
-  useEffect(() => {
-    if (isPrepareError || isClaimError) {
-      setShowError(true)
-    } else {
-      setShowError(false)
-    }
-  }, [isPrepareError, isClaimError])
 
   useEffect(() => {
     if (isClaimLoading) {
@@ -165,24 +144,8 @@ const SLA = () => {
   return (
     <Grid container spacing={7}>
       <Grid item xs={12} sx={{ marginTop: 4.8, marginBottom: 3 }}>
-        {showError ? (
-          <Grid item xs={12} sx={{ mb: 3 }}>
-            <Alert
-              severity='warning'
-              sx={{ '& a': { fontWeight: 400 } }}
-              action={
-                <IconButton size='small' color='inherit' aria-label='close' onClick={() => setShowError(false)}>
-                  <Close fontSize='inherit' />
-                </IconButton>
-              }
-            >
-              <AlertTitle>{JSON.stringify(prepareError || txError || claimError)}</AlertTitle>
-            </Alert>
-          </Grid>
-        ) : null}
         <Card>
           {data && isTxError && JSON.stringify(txError)}
-          {showError && JSON.stringify(claimError)}
           {data && !isTxError && !isTxLoading && (
             <Grid container spacing={6}>
               <Grid item xs={12}>
@@ -195,9 +158,15 @@ const SLA = () => {
                       }}
                     />
                     {name}
-                    <Button variant='outlined' size='medium' style={{ marginLeft: 'auto' }} onClick={write}>
-                      Claim
-                    </Button>
+                    {/* 
+                          // @ts-ignore */}
+                    <Tooltip title={prepareError ? prepareError?.shortMessage : ''} style={{ marginLeft: 'auto' }}>
+                      <span>
+                        <Button variant='outlined' size='medium' disabled={!write} onClick={write}>
+                          Claim
+                        </Button>
+                      </span>
+                    </Tooltip>
                   </Typography>
                   <Divider sx={{ marginTop: 6.5, marginBottom: 6.75 }} />
                   <Grid container spacing={4}>
