@@ -21,17 +21,21 @@ By leveraging the decentralized nature of blockchain, DSLA removes the need for 
 
 ## What it does
 
-The steps for a typical onboarding are as follows:
+### Architecture:
+
+![DSLA Architecture](../frontend/public/images/DSLAArchitecture.png)
+
+### Steps for onboarding a consumer
 
 1. A producer (service provider) registers with us and creates an SLA contract that is deployed on the blockchain.
-1. The producer then invites any consumer (service consumer) using the consumer's email address to this SLA using `inviteConsumer` and a unique link is sent to the consumer to join the SLA agreement.
-1. The consumer then clicks on this unique link to join the SLA agreement using any wallet of his choice (Metamask etc).
-1. The consumer has to pay the requested subscription amount (currently in Matic) defined by the producer while accepting the invite. The subscription amount gets locked inside the SLA contract for the duration for which the subscription is valid.
-1. Once a consumer is added, we automatically start checking for max first response times on ZenDesk and up-times guarantees.
-1. Initially, the balance of the provider will be 100% and the consumer will be 0%.
-1. If any violation is found, the pre-determined fee is charged automatically and the balance of the provider will get reduced based on the number of charges for violations.
-1. After the pre-agreed contract time ends, the provider can claim his funds, and the consumer can also claim the refunds based on the violations of the contract.
-1. Apart from this, a fee is automatically transferred to the Manager contract for every SLA created which can be withdrawn by the DSLA team for maintaining this system.
+2. The producer then invites any consumer (service consumer) using the consumer's email address to this SLA using `inviteConsumer` and a unique link is sent to the consumer to join the SLA agreement.
+3. The consumer then clicks on this unique link to join the SLA agreement using any wallet of his choice (Metamask etc).
+4. The consumer has to pay the requested subscription amount (currently in Matic) defined by the producer while accepting the invite. The subscription amount gets locked inside the SLA contract for the duration for which the subscription is valid.
+5. Once a consumer is added, we automatically start checking for max first response times on ZenDesk and up-times guarantees.
+6. Initially, the balance of the provider will be 100% and the consumer will be 0%.
+7. If any violation is found, the pre-determined fee is charged automatically and the balance of the provider will get reduced based on the number of charges for violations.
+8. After the pre-agreed contract time ends, the provider can claim his funds, and the consumer can also claim the refunds based on the violations of the contract.
+9. Apart from this, a fee is automatically transferred to the Manager contract for every SLA created which can be withdrawn by the DSLA team for maintaining this system.
 
 ### Guarantees provided
 
