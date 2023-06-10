@@ -316,21 +316,13 @@ contract SLA {
         );
     }
 
-    function completeCheckSLACompliance(
-        bytes32 _requestId,
-        bytes calldata response,
-        bytes calldata err
-    ) public {
+    function completeCheckSLACompliance(bytes calldata response) public {
         if (keccak256(response) != keccak256(bytes("1"))) {
             reportUptimeViolation();
         }
     }
 
-    function completeCheckZendeskSLACompliance(
-        bytes32 _requestId,
-        bytes calldata response,
-        bytes calldata err
-    ) public {
+    function completeCheckZendeskSLACompliance(bytes calldata response) public {
         if (keccak256(response) != keccak256(bytes("NA"))) {
             reportFirstResponseTimeViolation(msg.sender);
         }

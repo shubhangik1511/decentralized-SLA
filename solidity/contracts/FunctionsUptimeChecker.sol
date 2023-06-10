@@ -100,7 +100,7 @@ contract FunctionsUptimeChecker is FunctionsClient, ConfirmedOwner {
         latestResponse = response;
         latestError = err;
         SLA slaContract = SLA(requestIdSlaMap[requestId]);
-        slaContract.completeCheckSLACompliance(requestId, response, err);
+        slaContract.completeCheckSLACompliance(response);
         emit OCRResponse(requestId, response, err);
     }
 

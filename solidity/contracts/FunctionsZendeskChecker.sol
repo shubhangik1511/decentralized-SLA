@@ -98,7 +98,7 @@ contract FunctionsZendeskChecker is FunctionsClient, ConfirmedOwner {
         latestResponse = response;
         latestError = err;
         SLA slaContract = SLA(requestIdSlaMap[requestId]);
-        slaContract.completeCheckZendeskSLACompliance(requestId, response, err);
+        slaContract.completeCheckZendeskSLACompliance(response);
         emit OCRResponse(requestId, response, err);
     }
 

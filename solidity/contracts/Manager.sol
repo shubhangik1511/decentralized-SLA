@@ -97,6 +97,7 @@ contract Manager is IManager {
         providerSLAs[msg.sender].push(slaContract);
         functionsConsumerContract.addAuthorizedRequester(slaAddress);
         functionsUptimeCheckerContract.addAuthorizedRequester(slaAddress);
+        functionsZendeskCheckerContract.addAuthorizedRequester(slaAddress);
         emit SLAContractCreated(slaAddress);
     }
 

@@ -47,7 +47,7 @@ async function main() {
       "hello",
       [
         "bchaitanya15@gmail.com",
-        `http://localhost:3000/accept-invite?sla=${sla.address}`,
+        `http://localhost:3000/decentralized-SLA/accept-invite?sla=${sla.address}`,
         new Date().getTime().toString(),
       ],
       300_000,
