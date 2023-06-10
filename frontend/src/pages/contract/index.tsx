@@ -11,11 +11,15 @@ import Typography from '@mui/material/Typography'
 import Box, { BoxProps } from '@mui/material/Box'
 import ArrowLeft from 'mdi-material-ui/ArrowLeft'
 import Button from '@mui/material/Button'
+import Alert from '@mui/material/Alert'
+import IconButton from '@mui/material/IconButton'
+import AlertTitle from '@mui/material/AlertTitle'
+import Close from 'mdi-material-ui/Close'
 
 // ** Third Party Styles Imports
 import 'react-datepicker/dist/react-datepicker.css'
 
-import { useContractReads, useAccount } from 'wagmi'
+import { useContractReads, useAccount, usePrepareContractWrite, useContractWrite, useWaitForTransaction } from 'wagmi'
 import slaAbi from 'src/@core/abi/SlaAbi.json'
 import { useRouter } from 'next/router'
 
@@ -36,6 +40,8 @@ const SLA = () => {
   const [chargePerViolation, setChargePerViolation] = useState<string>('')
   const [uptimeViolations, setUptimeViolations] = useState<string>('')
   const [firstResponseTimeViolations, setFirstResponseTimeViolations] = useState<string>('')
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [showError, setShowError] = useState<boolean>(false)
 
   const router = useRouter()
   const { address } = useAccount()
@@ -47,7 +53,12 @@ const SLA = () => {
     }
   }, [router])
 
-  const { data, isError, error, isLoading } = useContractReads({
+  const {
+    data,
+    isError: isTxError,
+    error: txError,
+    isLoading: isTxLoading
+  } = useContractReads({
     contracts: [
       {
         address: sla as `0x${string}`,
@@ -97,7 +108,7 @@ const SLA = () => {
   })
 
   useEffect(() => {
-    if (data && !isLoading && !isError) {
+    if (data && !isTxLoading && !isTxError) {
       console.log(data)
       setName(data[0]?.result as string)
       setDuration(data[1]?.result as string)
@@ -108,16 +119,71 @@ const SLA = () => {
       setUptimeViolations(data[6]?.result as string)
       setFirstResponseTimeViolations(data[7]?.result as string)
     }
-  }, [data, executionStart, isError, isLoading])
+  }, [data, executionStart, isTxError, isTxLoading])
 
-  if (isLoading) return <CircularProgress />
+  const {
+    config,
+    error: prepareError,
+    isError: isPrepareError
+  } = usePrepareContractWrite({
+    address: sla as `0x${string}`,
+    abi: slaAbi,
+    functionName: 'claimFees',
+    args: [address]
+  })
+
+  const { data: claimData, write } = useContractWrite(config)
+
+  const {
+    isLoading: isClaimLoading,
+    isSuccess: isClaimSuccess,
+    error: claimError,
+    isError: isClaimError
+  } = useWaitForTransaction({
+    hash: claimData?.hash
+  })
+
+  useEffect(() => {
+    if (isPrepareError || isClaimError) {
+      setShowError(true)
+    } else {
+      setShowError(false)
+    }
+  }, [isPrepareError, isClaimError])
+
+  useEffect(() => {
+    if (isClaimLoading) {
+      setIsLoading(true)
+    }
+    if (isClaimSuccess) {
+      setIsLoading(false)
+    }
+  }, [isClaimSuccess, isClaimLoading, router])
+
+  if (isTxLoading || isLoading) return <CircularProgress />
 
   return (
     <Grid container spacing={7}>
       <Grid item xs={12} sx={{ marginTop: 4.8, marginBottom: 3 }}>
+        {showError ? (
+          <Grid item xs={12} sx={{ mb: 3 }}>
+            <Alert
+              severity='warning'
+              sx={{ '& a': { fontWeight: 400 } }}
+              action={
+                <IconButton size='small' color='inherit' aria-label='close' onClick={() => setShowError(false)}>
+                  <Close fontSize='inherit' />
+                </IconButton>
+              }
+            >
+              <AlertTitle>{JSON.stringify(prepareError || txError || claimError)}</AlertTitle>
+            </Alert>
+          </Grid>
+        ) : null}
         <Card>
-          {data && isError && JSON.stringify(error)}
-          {data && !isError && !isLoading && (
+          {data && isTxError && JSON.stringify(txError)}
+          {showError && JSON.stringify(claimError)}
+          {data && !isTxError && !isTxLoading && (
             <Grid container spacing={6}>
               <Grid item xs={12}>
                 <CardContent sx={{ padding: theme => `${theme.spacing(3.25, 5.75, 6.25)} !important` }}>
@@ -129,7 +195,7 @@ const SLA = () => {
                       }}
                     />
                     {name}
-                    <Button variant='outlined' size='medium' style={{ marginLeft: 'auto' }}>
+                    <Button variant='outlined' size='medium' style={{ marginLeft: 'auto' }} onClick={write}>
                       Claim
                     </Button>
                   </Typography>
